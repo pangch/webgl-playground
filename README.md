@@ -1,2 +1,3 @@
-webgl-playground
-================
+# WebGL Playground
+
+Test applications of WebGL

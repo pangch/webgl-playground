@@ -1,0 +1,57 @@
+body {
+	margin: 0;
+}
+
+
+div.canvas, div.dashboard {
+	display: none;
+}
+
+div.canvas.active, div.dashboard.active {
+	display: block;
+}
+
+div.canvas {
+	background: #fff;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+  
+}
+
+div.canvas .info {
+  font-size: large;
+  position: absolute;
+  top: 40%;
+  width: 100%;  
+  text-align: center;
+}
+
+div.canvas .info.error {
+  color: #f22;
+}
+
+div.dashboard {
+	position: absolute;
+	width: 100px;
+	right: 30px;
+	top: 30px;
+  padding: 10px;
+}
+
+div.dashboard.light {
+  color: #fff;
+  border: 1px solid #fff;
+  background: #222;
+  opacity: .7;
+}
+
+div.canvas canvas {
+  border: none;
+}
+
+div.canvas canvas.error { 
+  display: none;
+}
