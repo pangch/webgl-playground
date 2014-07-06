@@ -18,6 +18,7 @@
     "jquery": "~2.1.1",
     "requirejs": "~2.1.14",
     "glmatrix": "git://github.com/toji/gl-matrix.git#~2.2.1",
-    "requirejs-text": "~2.0.12"
+    "requirejs-text": "~2.0.12",
+    "spin.js": "~2.0.1"
   }
 }

@@ -30,6 +30,10 @@ define(['./scene', './assets'], function(scene) {
       
       scene.init(initGL(canvas), initParams(canvas));
       scene.run();
-		}
+		},
+    
+    exit: function() {
+      scene.exit();
+    }
 	};
 })

@@ -36,8 +36,9 @@ define(['./shader', './buffers', 'gl-matrix'], function(shader, buffers, glm) {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, buffers.squareVertexPosition.numItems);
   };
   
+  var animFramRequest;
   var updateFrame = function() {
-    requestAnimFrame(updateFrame);
+    animFramRequest = requestAnimFrame(updateFrame);
     drawScene();
   };
 
@@ -55,6 +56,10 @@ define(['./shader', './buffers', 'gl-matrix'], function(shader, buffers, glm) {
 
     run: function() {
       updateFrame();
+    },
+    
+    exit: function() {
+      cancelRequestAnimFrame(animFramRequest);
     }
   };
 });

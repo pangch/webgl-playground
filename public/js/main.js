@@ -6,51 +6,129 @@ requirejs.config({
   }
 });
 
-requirejs(['jquery'], function($) {
-  var canvas = null;
+requirejs(['jquery', 'spin'], function($, Spinner) {
+  
+  var currentApp = null;
+  
+  var updateCanvasSize = function() {
+    // It is necessary to set width and height as attribute
+    // on canvas element. Setting them on style or in css
+    // does not change the coordinate system of canvas.
+    if (currentApp) {
+      var canvas = $('div.canvas canvas');
+      canvas.attr('width', $(window).width());
+      canvas.attr('height', $(window).height());
+    }
+  };
   
   var launchApp = function(appName) {
     var canvasContainer = $('div.canvas');
     canvasContainer.addClass('active');
     
     canvas = canvasContainer.children('canvas');
-    updateCanvasSize();
     
-    var info = canvasContainer.children('.info');
-    info.html('');
-    info.removeClass('error');
-
     var dashboard = $('div.dashboard');
     dashboard.addClass('active');
     dashboard.removeClass('dark light');
     dashboard.html('');
 
     requirejs(['apps/' + appName + '/app'], function(app) {
+      // Create a new object instance to represent this app so that we can store status
+      // of the app on the object
+      app = $.extend({
+        loaded: false,
+        aborted: false
+      }, app);
+      
+      currentApp = app;
+      updateCanvasSize();
+      
+      var info = canvasContainer.children('.info');
+      var spinner = null;
+      
+      // Show a spinner after delay if the app is not loaded yet.
+      setTimeout(function() {
+        if (!app.loaded && !app.aborted) {
+          spinner = new Spinner().spin();
+          info.html(spinner.el);
+        }        
+      }, 300);
+      
       try {
+        // Launch app after loading
         app.load(function() {
-          app.run($("div.canvas canvas"), dashboard);
+          if (spinner) {
+            spinner.stop();
+          }
+          
+          if (app.aborted) {
+            return;
+          }
+          app.loaded = true;
+          app.run(canvas, dashboard);
         });
       } catch (e) {
-        canvas.addClass('error');
+        if (spinner) {
+          spinner.stop();
+        }        
         
-        info.text(e);
+        canvas.addClass('error');
+        info.html(e);
         info.addClass('error');
-      }      
+      }    
     });
   };
   
-  var updateCanvasSize = function() {
-    // It is necessary to set width and height as attribute
-    // on canvas element. Setting them on style or in css
-    // does not change the coordinate system of canvas.
-    if (canvas) {
-      canvas.attr('width', $(window).width());
-      canvas.attr('height', $(window).height());
+  var tearDownApp = function(app) {
+    if (app.loaded) {
+      app.exit();
+    } else {
+      app.aborted = true;
     }
-  }
-
-  $(document).ready(function() {
     
+    // Clear the old canvas and dashboard
+    var canvasContainer = $('div.canvas');
+    canvasContainer.removeClass('active');
+    canvasContainer.children('canvas').remove();
+    canvasContainer.prepend($('<canvas></canvas>'));
+    
+    var info = canvasContainer.children('.info');
+    info.html('');
+    info.removeClass('error');
+        
+    var dashboard = $('div.dashboard');
+    dashboard.removeClass('active');
+    dashboard.removeClass('dark light');
+  };
+  
+  // Let the active app handle key event first, and then run generic handler
+  var handleKeyEvent = function(evt) {
+    if (currentApp === null) {
+      return;
+    }
+
+    if (currentApp.handleKeyEvent) {
+      if (!currentApp.handleKeyEvent(evt)) {
+        return;
+      }
+    }
+    
+    if (evt.type === 'keydown') {
+      // Press '/' to toggle dashboard
+      if (!evt.shiftKey && evt.keyCode === 191) {
+        $('div.dashboard').toggleClass('hidden');
+      }
+      
+      // Press 'ESC' to exit
+      if (evt.keyCode === 27) {
+        tearDownApp(currentApp);
+        currentApp = null;
+      }
+    }
+  };
+  
+  // Document initialization
+  $(document).ready(function() {    
     // Setup actions on app links
     $('#app-menu a[data-app]').each(function() {
       var self = $(this);
@@ -58,10 +136,24 @@ requirejs(['jquery'], function($) {
         launchApp(self.attr('data-app'));
       })    
     });
-  
+    
     // Update canvas size on resize
     $(window).resize(function() {
       updateCanvasSize();
+    });
+    
+    $(document).keyup(function(evt) {
+      if (typeof evt.type === 'undefined') {
+        evt.type = 'keyup';
+      }
+      handleKeyEvent(evt);
+    });
+    
+    $(document).keydown(function(evt) {
+      if (typeof evt.type === 'undefined') {
+        evt.type = 'keydown';
+      }
+      handleKeyEvent(evt);
     });
   });  
 });

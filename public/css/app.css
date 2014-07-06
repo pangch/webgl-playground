@@ -2,13 +2,16 @@ body {
 	margin: 0;
 }
 
-
 div.canvas, div.dashboard {
 	display: none;
 }
 
 div.canvas.active, div.dashboard.active {
 	display: block;
+}
+
+div.dashboard.active.hidden {
+  display: none;
 }
 
 div.canvas {
