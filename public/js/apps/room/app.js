@@ -1,4 +1,4 @@
-define(['./scene', './models'], function(scene, models) {
+define(['./scene', './models', './state'], function(scene, models, state) {
 
 	var initGL = function(canvas) {
     var gl = canvas.get(0).getContext("experimental-webgl");      
@@ -34,6 +34,10 @@ define(['./scene', './models'], function(scene, models) {
     
     exit: function() {
       scene.exit();
+    },
+    
+    handleKeyEvent: function(evt) {
+      state.handleKeyEvent(evt);
     }
 	};
 })

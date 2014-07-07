@@ -1,4 +1,4 @@
-define(['./shader', './models', 'gl-matrix'], function(shader, models, glm) {
+define(['./shader', './models', './state', 'gl-matrix'], function(shader, models, state, glm) {
   
   var gl;
   var params;
@@ -38,8 +38,14 @@ define(['./shader', './models', 'gl-matrix'], function(shader, models, glm) {
     gl.useProgram(shader.program);
     
     glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 100.0);
-    glm.mat4.translate(pMatrix, pMatrix, [-5.0, -5.0, -25.0]);
-    glm.mat4.rotate(pMatrix, pMatrix, 0.270796, [.2, 1.0, 0.0])
+    glm.mat4.rotate(pMatrix, pMatrix, -1.57079633, [1, 0, 0]);
+    
+    glm.mat4.rotate(pMatrix, pMatrix, -state.getPitch(), [1, 0, 0]);
+    glm.mat4.rotate(pMatrix, pMatrix, -state.getYaw(), [0, 0, 1]);
+    
+    var position = state.getPosition();
+    glm.vec3.negate(position, position);
+    glm.mat4.translate(pMatrix, pMatrix, position);
     
     glm.mat4.identity(mvMatrix);
     
@@ -50,6 +56,8 @@ define(['./shader', './models', 'gl-matrix'], function(shader, models, glm) {
   var animFramRequest;
   var updateFrame = function() {
     animFramRequest = requestAnimFrame(updateFrame);
+    
+    state.animate();
     drawScene();
   };
 
