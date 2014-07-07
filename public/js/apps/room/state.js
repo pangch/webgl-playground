@@ -6,14 +6,15 @@ define(['gl-matrix'], function(glm) {
   var yaw = 0;
   var yawRate = 0;
   
-  var joggingAngle = 0;
-  
   var xPos = 5.0;
   var yPos = 5.0;
   var zPos = 0;
   
   var speed = 0;
   var horizontalSpeed = 0;
+  
+  var joggingAngle = 0;
+  var jumpSpeed = 0;
   
   var lastTime = null;
   
@@ -59,11 +60,18 @@ define(['gl-matrix'], function(glm) {
     } else {
       horizontalSpeed = 0;
     }
+    
+    if (pressedKeys[32]) {
+      // Space
+      if (jumpSpeed == 0) {
+        jumpSpeed = 0.0014;
+      }
+    }
   };
   
   return {
     handleKeyEvent: function(evt) {
-      if ([37, 38, 39, 40, 65, 68, 83, 87].indexOf(evt.keyCode) !== -1) {
+      if ([32, 37, 38, 39, 40, 65, 68, 83, 87].indexOf(evt.keyCode) !== -1) {
         if (evt.type === 'keydown') {
           pressedKeys[evt.keyCode] = true;
         } else if (evt.type === 'keyup') {
@@ -87,11 +95,23 @@ define(['gl-matrix'], function(glm) {
           xPos -= Math.sin(yaw) * speed * elapsed;
           yPos += Math.cos(yaw) * speed * elapsed;
         }
-        
         if (horizontalSpeed != 0) {
           xPos -= Math.cos(yaw) * horizontalSpeed * elapsed;
           yPos -= Math.sin(yaw) * horizontalSpeed * elapsed;
-        }        
+        }
+        if (jumpSpeed != 0) {
+          zPos += jumpSpeed * elapsed;
+          if (zPos >= 0.6) {
+            jumpSpeed = -jumpSpeed;
+          } else if (zPos <= 0) {
+            jumpSpeed = 0;
+            zPos = 0;
+          }
+        } else if (speed != 0 || horizontalSpeed != 0) {
+          // Apply jogging height variation
+          joggingAngle += elapsed * 0.015;
+          zPos = Math.sin(joggingAngle) / 160;
+        }
       }
       lastTime = now;
     },
