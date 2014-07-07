@@ -37,7 +37,11 @@ define(['./shader', './models', './state', 'gl-matrix'], function(shader, models
     
     gl.useProgram(shader.program);
     
+    // Perspective projection with fovy of 45 degree
     glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 100.0);
+    
+    // Start by rotating the camera 90 degrees about x axis, so that z axis points 
+    // upward from the initial camera's view
     glm.mat4.rotate(pMatrix, pMatrix, -1.57079633, [1, 0, 0]);
     
     glm.mat4.rotate(pMatrix, pMatrix, -state.getPitch(), [1, 0, 0]);

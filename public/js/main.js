@@ -28,7 +28,7 @@ requirejs(['jquery', 'spin'], function($, Spinner) {
     canvas = canvasContainer.children('canvas');
     
     var dashboard = $('div.dashboard');
-    dashboard.addClass('active');
+    dashboard.addClass('active hidden');
     dashboard.removeClass('dark light');
     dashboard.html('');
 

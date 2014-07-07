@@ -1,4 +1,4 @@
-define(['common/utils', 'text!./vertex.glsl', 'text!./fragment.glsl'], function(utils, vertexShader, fragmentShader) {
+define(['./utils', 'text!./vertex.glsl', 'text!./fragment.glsl'], function(utils, vertexShader, fragmentShader) {
 	return {
 		init: function(gl) {
 			// Build shader program

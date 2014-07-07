@@ -1,4 +1,4 @@
-define(['common/utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
+define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
 
   var floorImage = null;
   var wallImage = null;
@@ -7,6 +7,7 @@ define(['common/utils', 'jquery', 'text!./assets.json'], function(utils, $, asse
   
   return {
     load: function(callback) {
+      // Load texture images
       $.when(
         utils.loadImage('images/floor.jpg'),
         utils.loadImage('images/wall1.jpg'))
@@ -23,12 +24,20 @@ define(['common/utils', 'jquery', 'text!./assets.json'], function(utils, $, asse
     init: function(gl) {
       this.objects = {};
       
-      for (var name in assets.objects) {
-        this.objects[name] = utils.buildModelObject(gl, assets.objects[name]);        
+      // Load static objects
+      if (assets.objects) {
+        for (var name in assets.objects) {
+          this.objects[name] = utils.buildModelObject(gl, assets.objects[name]);        
+        }
+        
+        if (this.objects.floor) {
+          this.objects.floor.texture = utils.buildTexture(gl, floorImage);
+        }
+        if (this.objects.walls) {
+          this.objects.walls.texture = utils.buildTexture(gl, wallImage);
+        }        
       }
       
-      this.objects.floor.texture = utils.buildTexture(gl, floorImage);
-      this.objects.walls.texture = utils.buildTexture(gl, wallImage);      
     }
     
   };

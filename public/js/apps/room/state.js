@@ -6,9 +6,7 @@ define(['gl-matrix'], function(glm) {
   var yaw = 0;
   var yawRate = 0;
   
-  var xPos = 5.0;
-  var yPos = 5.0;
-  var zPos = 0;
+  var pos = glm.vec3.fromValues(5, 5, 0);
   
   var speed = 0;
   var horizontalSpeed = 0;
@@ -78,7 +76,8 @@ define(['gl-matrix'], function(glm) {
           pressedKeys[evt.keyCode] = false;
         }
         evt.preventDefault();
-      }      
+      }
+      return true;
     },
     
     animate: function() {
@@ -91,28 +90,40 @@ define(['gl-matrix'], function(glm) {
         yaw += yawRate * elapsed;
         pitch += pitchRate * elapsed;
         
+        var cameraDir = [Math.sin(-yaw), Math.cos(yaw)];
+        var posDiff = [0, 0, 0];
+        
         if (speed != 0) {
-          xPos -= Math.sin(yaw) * speed * elapsed;
-          yPos += Math.cos(yaw) * speed * elapsed;
+          var dist = speed * elapsed;
+          posDiff[0] += cameraDir[0] * dist;
+          posDiff[1] += cameraDir[1] * dist;
         }
+        
         if (horizontalSpeed != 0) {
-          xPos -= Math.cos(yaw) * horizontalSpeed * elapsed;
-          yPos -= Math.sin(yaw) * horizontalSpeed * elapsed;
+          var horizontalDir = [-cameraDir[1], cameraDir[0]];
+          var dist = horizontalSpeed * elapsed;
+          posDiff[0] += horizontalDir[0] * dist;
+          posDiff[1] += horizontalDir[1] * dist;
         }
         if (jumpSpeed != 0) {
-          zPos += jumpSpeed * elapsed;
-          if (zPos >= 0.6) {
+          if (pos[2] >= 0.5) {
             jumpSpeed = -jumpSpeed;
-          } else if (zPos <= 0) {
+          } else if (pos[2] <= 0) {
             jumpSpeed = 0;
-            zPos = 0;
+            pos[2] = 0;
+          } else {
+            posDiff[2] += jumpSpeed * elapsed;
           }
         } else if (speed != 0 || horizontalSpeed != 0) {
           // Apply jogging height variation
           joggingAngle += elapsed * 0.015;
-          zPos = Math.sin(joggingAngle) / 160;
+          pos[2] = Math.sin(joggingAngle) / 160;
         }
+        
+        // Apply position change
+        glm.vec3.add(pos, pos, posDiff);
       }
+      
       lastTime = now;
     },
     
@@ -125,7 +136,10 @@ define(['gl-matrix'], function(glm) {
     },
     
     getPosition: function() {
-      return [xPos, yPos, zPos + 0.2];
+      var currentPos = glm.vec3.clone(pos);
+      // Adjust for player's height
+      glm.vec3.add(currentPos, currentPos, [0, 0, 0.2]);
+      return currentPos;
     }
     
   };

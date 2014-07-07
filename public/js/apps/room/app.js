@@ -37,7 +37,7 @@ define(['./scene', './models', './state'], function(scene, models, state) {
     },
     
     handleKeyEvent: function(evt) {
-      state.handleKeyEvent(evt);
+      return state.handleKeyEvent(evt);
     }
 	};
 })
