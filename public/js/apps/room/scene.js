@@ -11,23 +11,21 @@ define(['./shader', './models', 'gl-matrix'], function(shader, models, glm) {
     gl.uniformMatrix4fv(shader.mvMatrixUniform, false, mvMatrix);    
   };
   
-  var drawFloor = function() {
-    var floor = models.objects.floor;
-    
+  var drawObject = function(object) {
     setMatrixUniforms();    
     
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, floor.texture);
+    gl.bindTexture(gl.TEXTURE_2D, object.texture);
     gl.uniform1i(shader.textureUniform, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, floor.textureCoords);
+    gl.bindBuffer(gl.ARRAY_BUFFER, object.textureCoords);
     gl.vertexAttribPointer(shader.textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
     
-    gl.bindBuffer(gl.ARRAY_BUFFER, floor.vertices);
+    gl.bindBuffer(gl.ARRAY_BUFFER, object.vertices);
     gl.vertexAttribPointer(shader.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, floor.indices);
-    gl.drawElements(gl.TRIANGLES, floor.indexCount, gl.UNSIGNED_SHORT, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.indices);
+    gl.drawElements(gl.TRIANGLES, object.indexCount, gl.UNSIGNED_SHORT, 0);
   };
 
   var drawScene = function() {
@@ -40,10 +38,13 @@ define(['./shader', './models', 'gl-matrix'], function(shader, models, glm) {
     gl.useProgram(shader.program);
     
     glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 100.0);
-    glm.mat4.identity(mvMatrix);
-    glm.mat4.translate(mvMatrix, mvMatrix, [-1.5, 0.0, -7.0]);
+    glm.mat4.translate(pMatrix, pMatrix, [-5.0, -5.0, -25.0]);
+    glm.mat4.rotate(pMatrix, pMatrix, 0.270796, [.2, 1.0, 0.0])
     
-    drawFloor();
+    glm.mat4.identity(mvMatrix);
+    
+    drawObject(models.objects.floor);
+    drawObject(models.objects.walls);
   };
   
   var animFramRequest;

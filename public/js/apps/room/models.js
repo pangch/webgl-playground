@@ -23,12 +23,12 @@ define(['common/utils', 'jquery', 'text!./assets.json'], function(utils, $, asse
     init: function(gl) {
       this.objects = {};
       
-      for (var name in assets) {
-        this.objects[name] = utils.buildModelObject(gl, assets[name]);        
+      for (var name in assets.objects) {
+        this.objects[name] = utils.buildModelObject(gl, assets.objects[name]);        
       }
       
       this.objects.floor.texture = utils.buildTexture(gl, floorImage);
-      // this.objects.walls.texture = utils.buildTexture(gl, wallImage);      
+      this.objects.walls.texture = utils.buildTexture(gl, wallImage);      
     }
     
   };
