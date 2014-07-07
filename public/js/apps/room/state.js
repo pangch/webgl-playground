@@ -10,7 +10,7 @@ define(['gl-matrix'], function(glm) {
   
   var xPos = 5.0;
   var yPos = 5.0;
-  var zPos = 0.4;
+  var zPos = 0;
   
   var speed = 0;
   var horizontalSpeed = 0;
@@ -42,20 +42,20 @@ define(['gl-matrix'], function(glm) {
     
     if (pressedKeys[87]) {
       // W
-      speed = 0.005;
+      speed = 0.001;
     } else if (pressedKeys[83]) {
       // S
-      speed = -0.005;
+      speed = -0.001;
     } else {
       speed = 0;
     }
     
     if (pressedKeys[65]) {
       // A
-      horizontalSpeed = 0.005;
+      horizontalSpeed = 0.001;
     } else if (pressedKeys[68]) {
       // D
-      horizontalSpeed = -0.005;
+      horizontalSpeed = -0.001;
     } else {
       horizontalSpeed = 0;
     }
@@ -105,7 +105,7 @@ define(['gl-matrix'], function(glm) {
     },
     
     getPosition: function() {
-      return [xPos, yPos, zPos];
+      return [xPos, yPos, zPos + 0.2];
     }
     
   };
