@@ -1,7 +1,8 @@
-define(['./scene', './assets'], function(scene) {
+define(['./scene', './models'], function(scene, models) {
 
 	var initGL = function(canvas) {
     var gl = canvas.get(0).getContext("experimental-webgl");      
+    
     if (!gl) {
       throw "Failed to initialize WebGL.";
     }
@@ -21,7 +22,7 @@ define(['./scene', './assets'], function(scene) {
 
 	return {
     load: function(callback) {
-      callback();
+      models.load(callback);
     },
 
 		run: function(canvas, dashboard) {

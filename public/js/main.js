@@ -47,7 +47,7 @@ requirejs(['jquery', 'spin'], function($, Spinner) {
       var spinner = null;
       
       // Show a spinner after delay if the app is not loaded yet.
-      setTimeout(function() {
+      var spinnerTimer = setTimeout(function() {
         if (!app.loaded && !app.aborted) {
           spinner = new Spinner().spin();
           info.html(spinner.el);
@@ -70,7 +70,9 @@ requirejs(['jquery', 'spin'], function($, Spinner) {
       } catch (e) {
         if (spinner) {
           spinner.stop();
-        }        
+        } else {
+          clearTimeout(spinnerTimer);
+        }
         
         canvas.addClass('error');
         info.html(e);
