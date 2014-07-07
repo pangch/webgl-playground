@@ -106,8 +106,8 @@ define(['gl-matrix'], function(glm) {
           posDiff[1] += horizontalDir[1] * dist;
         }
         if (jumpSpeed != 0) {
-          if (pos[2] >= 0.5) {
-            jumpSpeed = -jumpSpeed;
+          if (pos[2] >= 0.5 && jumpSpeed > 0) {
+            jumpSpeed = -jumpSpeed;            
           } else if (pos[2] <= 0) {
             jumpSpeed = 0;
             pos[2] = 0;
