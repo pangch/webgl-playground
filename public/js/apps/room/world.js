@@ -40,18 +40,9 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
 
       // Generate floor object, which is a simple square
       var floor = {
-        vertices: [
-          0.0, 0.0, 0.0,
-          worldWidth, 0.0, 0.0,
-          worldWidth, worldHeight, 0.0,
-          0.0, worldHeight, 0.0
-        ],
-        textureCoords: [
-          0.0, 0.0,
-          worldWidth, 0.0,
-          worldWidth, worldHeight,
-          0.0, worldHeight
-        ],
+        vertices: [0.0, 0.0, 0.0, worldWidth, 0.0, 0.0, worldWidth, worldHeight, 0.0, 0.0, worldHeight, 0.0],
+        textureCoords: [0.0, 0.0, worldWidth, 0.0, worldWidth, worldHeight, 0.0, worldHeight],
+        normals: [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
         indices: [0, 1, 2, 0, 2, 3]
       };
       this.objects.floor = utils.buildModelObject(gl, floor);
@@ -59,9 +50,9 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
       
       // Generate walls
       var walls = [
-        { vertices:[], textureCoords: [], indices: []},
-        { vertices:[], textureCoords: [], indices: []},
-        { vertices:[], textureCoords: [], indices: []}
+        { vertices:[], textureCoords: [], normals: [], indices: [] },
+        { vertices:[], textureCoords: [], normals: [], indices: [] },
+        { vertices:[], textureCoords: [], normals: [], indices: [] }
       ];
       var currentIndexes = [0, 0, 0];
       for (var i = 0; i < worldWidth; i++) {
@@ -75,6 +66,7 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
           var wallNum = textureMap[i][j] - 1;
           if (i - 1 > 0 && heightMap[i - 1][j] < height) {
             walls[wallNum].vertices.push(i, j, 0, i, j + 1, 0, i, j + 1, height, i, j, height);
+            walls[wallNum].normals.push(-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0);
             walls[wallNum].textureCoords.push(0, 0, 1, 0, 1, height, 0, height);
             walls[wallNum].indices.push(
               currentIndexes[wallNum], currentIndexes[wallNum] + 1, currentIndexes[wallNum] + 2, 
@@ -84,6 +76,7 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
           }
           if (j - 1 > 0 && heightMap[i][j - 1] < height) {
             walls[wallNum].vertices.push(i, j, 0, i + 1, j, 0, i + 1, j, height, i, j, height);
+            walls[wallNum].normals.push(0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0);
             walls[wallNum].textureCoords.push(0, 0, 1, 0, 1, height, 0, height);
             walls[wallNum].indices.push(
               currentIndexes[wallNum], currentIndexes[wallNum] + 1, currentIndexes[wallNum] + 2, 
@@ -93,6 +86,7 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
           }
           if (i + 1 < worldWidth && heightMap[i + 1][j] < height) {
             walls[wallNum].vertices.push(i + 1, j, 0, i + 1, j + 1, 0, i + 1, j + 1, height, i + 1, j, height);
+            walls[wallNum].normals.push(1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0);
             walls[wallNum].textureCoords.push(0, 0, 1, 0, 1, height, 0, height);
             walls[wallNum].indices.push(
               currentIndexes[wallNum], currentIndexes[wallNum] + 1, currentIndexes[wallNum] + 2, 
@@ -102,6 +96,7 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
           }
           if (j + 1 < worldHeight && heightMap[i][j + 1] < height) {
             walls[wallNum].vertices.push(i, j + 1, 0, i + 1, j + 1, 0, i + 1, j + 1, height, i, j + 1, height);
+            walls[wallNum].normals.push(0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0);
             walls[wallNum].textureCoords.push(0, 0, 1, 0, 1, height, 0, height);
             walls[wallNum].indices.push(
               currentIndexes[wallNum], currentIndexes[wallNum] + 1, currentIndexes[wallNum] + 2, 
@@ -112,6 +107,7 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
           
           // Top
           walls[wallNum].vertices.push(i, j, height, i + 1, j, height, i + 1, j + 1, height, i, j + 1, height);
+          walls[wallNum].normals.push(0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1);
           walls[wallNum].textureCoords.push(0, 0, 1, 0, 1, 1, 0, 1);
           walls[wallNum].indices.push(
             currentIndexes[wallNum], currentIndexes[wallNum] + 1, currentIndexes[wallNum] + 2, 
