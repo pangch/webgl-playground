@@ -1,25 +1,33 @@
-define(['./shader', './world', './camera', 'gl-matrix'], function(shader, world, camera, glm) {
+define(['./shader', './world', './camera', './mat', 'gl-matrix'], function(shader, world, camera, mat, glm) {
   
   var gl;
   var params;
 
   var pMatrix = glm.mat4.create();   // Projection matrix
   var mvMatrix = glm.mat4.create();  // ModelView matrix
+  
+  var useLighting = true;
 
   var setMatrixUniforms = function() {
     gl.uniformMatrix4fv(shader.pMatrixUniform, false, pMatrix);
-    gl.uniformMatrix4fv(shader.mvMatrixUniform, false, mvMatrix);    
+    gl.uniformMatrix4fv(shader.mvMatrixUniform, false, mvMatrix);
+    
+    var normalMatrix = glm.mat3.create();
+    mat.toInverseMat3(mvMatrix, normalMatrix);
+    glm.mat3.transpose(normalMatrix, normalMatrix);
+    gl.uniformMatrix3fv(shader.nMatrixUniform, false, normalMatrix);
   };
   
   var drawObject = function(object) {
-    setMatrixUniforms();    
-    
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, object.texture);
     gl.uniform1i(shader.textureUniform, 0);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, object.textureCoords);
     gl.vertexAttribPointer(shader.textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, object.normals);
+    gl.vertexAttribPointer(shader.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
     
     gl.bindBuffer(gl.ARRAY_BUFFER, object.vertices);
     gl.vertexAttribPointer(shader.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
@@ -47,12 +55,21 @@ define(['./shader', './world', './camera', 'gl-matrix'], function(shader, world,
     glm.mat4.rotate(pMatrix, pMatrix, -camera.getPitch(), [1, 0, 0]);
     glm.mat4.rotate(pMatrix, pMatrix, -camera.getYaw(), [0, 0, 1]);
     
-    var position = camera.getPosition();
-    glm.vec3.negate(position, position);
-    glm.mat4.translate(pMatrix, pMatrix, position);
+    var pos = camera.getPosition();
+    glm.mat4.translate(pMatrix, pMatrix, [-pos[0], -pos[1], -pos[2]]);
     
     glm.mat4.identity(mvMatrix);
+    gl.uniform1i(shader.useLightingUniform, useLighting);
+    if (useLighting) {
+        gl.uniform3f(shader.ambientColorUniform, 0.2, 0.2, 0.2);
+        gl.uniform3f(shader.pointLightingLocationUniform, pos[0], pos[1], pos[2]);
+        gl.uniform3f(shader.pointLightingColorUniform, 0.5, 0.5, 0.5);
+        
+        var cameraDir = camera.getCameraDirection();        
+        gl.uniform3f(shader.pointLightingDirectionUniform, cameraDir[0], cameraDir[1], cameraDir[2]);
+    }
     
+    setMatrixUniforms();    
     drawObject(world.objects.floor);
     for (var i = 0; i < world.objects.walls.length; i++) {
       drawObject(world.objects.walls[i]);
@@ -85,6 +102,14 @@ define(['./shader', './world', './camera', 'gl-matrix'], function(shader, world,
     
     exit: function() {
       cancelRequestAnimFrame(animFramRequest);
+    },
+    
+    handleKeyEvent: function(evt) {
+      if (evt.type === 'keydown' && evt.keyCode === 76) {
+        useLighting = !useLighting;
+        console.log("Use lighting: ", useLighting);
+      }
+      return true;
     }
   };
 });

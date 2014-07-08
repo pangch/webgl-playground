@@ -18,12 +18,22 @@ define(['./utils', 'text!./vertex.glsl', 'text!./fragment.glsl'], function(utils
 	    this.vertexPositionAttribute = gl.getAttribLocation(program, "aVertexPosition");
 	    gl.enableVertexAttribArray(this.vertexPositionAttribute);
       
+	    this.vertexNormalAttribute = gl.getAttribLocation(program, "aVertexNormal");
+	    gl.enableVertexAttribArray(this.vertexNormalAttribute);
+      
       this.textureCoordAttribute = gl.getAttribLocation(program, "aTextureCoord");
       gl.enableVertexAttribArray(this.textureCoordAttribute);
 
 	    this.pMatrixUniform = gl.getUniformLocation(program, "uPMatrix");
 	    this.mvMatrixUniform = gl.getUniformLocation(program, "uMVMatrix");
+      this.nMatrixUniform = gl.getUniformLocation(program, "uNMatrix");
       this.textureUniform = gl.getUniformLocation(program, "uTexture");
+      
+      this.useLightingUniform = gl.getUniformLocation(program, "uUseLighting");
+      this.ambientColorUniform = gl.getUniformLocation(program, "uAmbientColor");
+      this.pointLightingLocationUniform = gl.getUniformLocation(program, "uPointLightingLocation");
+      this.pointLightingColorUniform = gl.getUniformLocation(program, "uPointLightingColor");
+      this.pointLightingDirectionUniform = gl.getUniformLocation(program, "uPointLightingDirection");
 		}
 	};
 });

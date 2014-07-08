@@ -2,7 +2,7 @@ define(['./world', 'gl-matrix'], function(world, glm) {
   var CLOSEST_DISTANCE = 0.2;
   
   var pos = glm.vec3.fromValues(5, 5, 0);     // Current position  
-  var cameraDir = glm.vec2.fromValues(0, 1);  // Camera direction vector in 2D, initial value is [sin(0), cos(0)]
+  var cameraDir = glm.vec3.fromValues(0, 1, 0);  // Camera direction vector, initial value is [sin(0), cos(0), sin(0)]
   
   var pitch = 0;
   var pitchSpeed = 0;
@@ -107,9 +107,16 @@ define(['./world', 'gl-matrix'], function(world, glm) {
         yaw += yawSpeed * elapsed;
         pitch += pitchSpeed * elapsed;
         
-        if (yawSpeed != 0) {
+        if (yawSpeed != 0 || pitchSpeed != 0) {
+          // Bound pitch
+          if (pitch > 1.0) {
+            pitch = 1.0;
+          } else if (pitch < -1.0) {
+            pitch = -1.0;
+          }
+          
           // Yaw changed
-          glm.vec2.set(cameraDir, Math.sin(-yaw), Math.cos(yaw));
+          glm.vec3.set(cameraDir, Math.sin(-yaw), Math.cos(yaw), Math.sin(pitch));
         }
         
         if (speed != 0) {
@@ -170,6 +177,12 @@ define(['./world', 'gl-matrix'], function(world, glm) {
       glm.vec3.add(currentPos, currentPos, [0, 0, 0.5]);
       
       return currentPos;
+    },
+    
+    getCameraDirection: function() {
+      return glm.vec3.clone(cameraDir);
+      glm.vec3.normalize(dir, dir);
+      return dir;
     }
     
   };

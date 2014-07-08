@@ -37,7 +37,7 @@ define(['./scene', './world', './camera'], function(scene, world, camera) {
     },
     
     handleKeyEvent: function(evt) {
-      return camera.handleKeyEvent(evt);
+      return camera.handleKeyEvent(evt) && scene.handleKeyEvent(evt);
     }
 	};
 })
