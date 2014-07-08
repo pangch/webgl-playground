@@ -1,4 +1,4 @@
-define(['./scene', './models', './state'], function(scene, models, state) {
+define(['./scene', './models', './camera'], function(scene, models, camera) {
 
 	var initGL = function(canvas) {
     var gl = canvas.get(0).getContext("experimental-webgl");      
@@ -37,7 +37,7 @@ define(['./scene', './models', './state'], function(scene, models, state) {
     },
     
     handleKeyEvent: function(evt) {
-      return state.handleKeyEvent(evt);
+      return camera.handleKeyEvent(evt);
     }
 	};
 })

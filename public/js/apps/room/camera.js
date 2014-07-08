@@ -1,12 +1,13 @@
 define(['gl-matrix'], function(glm) {
+    
+  var pos = glm.vec3.fromValues(5, 5, 0);     // Current position  
+  var cameraDir = glm.vec2.fromValues(0, 1);  // Camera direction vector in 2D, initial value is [sin(0), cos(0)]
   
   var pitch = 0;
-  var pitchRate = 0;
+  var pitchSpeed = 0;
   
   var yaw = 0;
-  var yawRate = 0;
-  
-  var pos = glm.vec3.fromValues(5, 5, 0);
+  var yawSpeed = 0;
   
   var speed = 0;
   var horizontalSpeed = 0;
@@ -21,22 +22,22 @@ define(['gl-matrix'], function(glm) {
   var handleKeys = function() {
     if (pressedKeys[38]) {
       // Up
-      pitchRate = 0.0006;
+      pitchSpeed = 0.0006;
     } else if (pressedKeys[40]) {
       // Down
-      pitchRate = -0.0006;
+      pitchSpeed = -0.0006;
     } else {
-      pitchRate = 0;
+      pitchSpeed = 0;
     }
     
     if (pressedKeys[37]) {
       // Left
-      yawRate = 0.001;
+      yawSpeed = 0.001;
     } else if (pressedKeys[39]) {
       // Right
-      yawRate = -0.001;
+      yawSpeed = -0.001;
     } else {
-      yawRate = 0;
+      yawSpeed = 0;
     }
     
     if (pressedKeys[87]) {
@@ -87,12 +88,15 @@ define(['gl-matrix'], function(glm) {
       if (lastTime) {
         var elapsed = now - lastTime;
 
-        yaw += yawRate * elapsed;
-        pitch += pitchRate * elapsed;
+        yaw += yawSpeed * elapsed;
+        pitch += pitchSpeed * elapsed;
         
-        var cameraDir = [Math.sin(-yaw), Math.cos(yaw)];
+        if (yawSpeed != 0) {
+          // Yaw changed
+          glm.vec2.set(cameraDir, Math.sin(-yaw), Math.cos(yaw));
+        }
+        
         var posDiff = [0, 0, 0];
-        
         if (speed != 0) {
           var dist = speed * elapsed;
           posDiff[0] += cameraDir[0] * dist;

@@ -1,4 +1,4 @@
-define(['./shader', './models', './state', 'gl-matrix'], function(shader, models, state, glm) {
+define(['./shader', './models', './camera', 'gl-matrix'], function(shader, models, camera, glm) {
   
   var gl;
   var params;
@@ -44,10 +44,10 @@ define(['./shader', './models', './state', 'gl-matrix'], function(shader, models
     // upward from the initial camera's view
     glm.mat4.rotate(pMatrix, pMatrix, -1.57079633, [1, 0, 0]);
     
-    glm.mat4.rotate(pMatrix, pMatrix, -state.getPitch(), [1, 0, 0]);
-    glm.mat4.rotate(pMatrix, pMatrix, -state.getYaw(), [0, 0, 1]);
+    glm.mat4.rotate(pMatrix, pMatrix, -camera.getPitch(), [1, 0, 0]);
+    glm.mat4.rotate(pMatrix, pMatrix, -camera.getYaw(), [0, 0, 1]);
     
-    var position = state.getPosition();
+    var position = camera.getPosition();
     glm.vec3.negate(position, position);
     glm.mat4.translate(pMatrix, pMatrix, position);
     
@@ -61,7 +61,7 @@ define(['./shader', './models', './state', 'gl-matrix'], function(shader, models
   var updateFrame = function() {
     animFramRequest = requestAnimFrame(updateFrame);
     
-    state.animate();
+    camera.animate();
     drawScene();
   };
 
