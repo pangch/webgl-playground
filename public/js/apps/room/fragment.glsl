@@ -23,8 +23,8 @@ void main(void) {
       vec3 lightDirection = normalize(lightVec);
       
       float lightDistanceWeighting = min(pow(1.0 / length(lightVec), 2.0) * 5.0, 3.0);
-      float directionalLightWeighting = pow(max(dot(normalize(vNormal), lightDirection), 0.0), 3.0) + 0.1;
-      float lightFocusWeighting = pow(max(dot(-lightDirection, uPointLightingDirection), 0.0), 3.0) + 0.1;      
+      float directionalLightWeighting = pow(max(dot(normalize(vNormal), lightDirection), 0.0), 10.0) + 0.3;
+      float lightFocusWeighting = pow(max(dot(-lightDirection, uPointLightingDirection), 0.0), 10.0) + 0.1;      
       lightWeighting = uAmbientColor + uPointLightingColor * directionalLightWeighting * lightFocusWeighting * lightDistanceWeighting;
   }
   
