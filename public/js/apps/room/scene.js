@@ -63,7 +63,7 @@ define(['./shader', './world', './camera', './mat', 'gl-matrix'], function(shade
     if (useLighting) {
         gl.uniform3f(shader.ambientColorUniform, 0.2, 0.2, 0.2);
         gl.uniform3f(shader.pointLightingLocationUniform, pos[0], pos[1], pos[2]);
-        gl.uniform3f(shader.pointLightingColorUniform, 0.5, 0.5, 0.5);
+        gl.uniform3f(shader.pointLightingColorUniform, 1.0, 0.95, 0.9);
         
         var cameraDir = camera.getCameraDirection();        
         gl.uniform3f(shader.pointLightingDirectionUniform, cameraDir[0], cameraDir[1], cameraDir[2]);
