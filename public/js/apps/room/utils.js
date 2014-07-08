@@ -1,5 +1,5 @@
 define(['jquery'], function($) {
-	return {
+	return {    
     loadImage: function(path) {
       var deferred = new $.Deferred();
       var image = new Image();

@@ -26,6 +26,10 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
         });
     },
     
+    getHeightMap: function() {
+      return heightMap;
+    },
+    
     initWithWorld: function(gl, world) {
       heightMap = world.heightMap;
       textureMap = world.textureMap;

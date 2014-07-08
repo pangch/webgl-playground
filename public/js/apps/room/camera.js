@@ -1,5 +1,6 @@
-define(['gl-matrix'], function(glm) {
-    
+define(['./world', 'gl-matrix'], function(world, glm) {
+  var CLOSEST_DISTANCE = 0.2;
+  
   var pos = glm.vec3.fromValues(5, 5, 0);     // Current position  
   var cameraDir = glm.vec2.fromValues(0, 1);  // Camera direction vector in 2D, initial value is [sin(0), cos(0)]
   
@@ -42,20 +43,20 @@ define(['gl-matrix'], function(glm) {
     
     if (pressedKeys[87]) {
       // W
-      speed = 0.003;
+      speed = 0.002;
     } else if (pressedKeys[83]) {
       // S
-      speed = -0.003;
+      speed = -0.002;
     } else {
       speed = 0;
     }
     
     if (pressedKeys[65]) {
       // A
-      horizontalSpeed = 0.003;
+      horizontalSpeed = 0.002;
     } else if (pressedKeys[68]) {
       // D
-      horizontalSpeed = -0.003;
+      horizontalSpeed = -0.002;
     } else {
       horizontalSpeed = 0;
     }
@@ -63,10 +64,25 @@ define(['gl-matrix'], function(glm) {
     if (pressedKeys[32]) {
       // Space
       if (jumpSpeed == 0) {
-        jumpSpeed = 0.004;
+        jumpSpeed = 0.002;
       }
     }
   };
+  
+  var isCollision = function(posX, posY, dir, speed) {
+    var oldPosX = Math.floor(posX), oldPosY = Math.floor(posY);
+    var dirSign = [Math.sign(dir[0]), Math.sign(dir[1])];
+    if (speed < 0) {
+      dirSign[0] = -dirSign[0];
+      dirSign[1] = -dirSign[1];
+    }
+    posX += dirSign[0] * CLOSEST_DISTANCE;
+    posY += dirSign[1] * CLOSEST_DISTANCE;
+    posX = Math.floor(posX);
+    posY = Math.floor(posY);
+    var heightMap = world.getHeightMap();
+    return heightMap[oldPosX][posY] > 0 || heightMap[posX][oldPosY] > 0;
+  }
   
   return {
     handleKeyEvent: function(evt) {
@@ -96,36 +112,45 @@ define(['gl-matrix'], function(glm) {
           glm.vec2.set(cameraDir, Math.sin(-yaw), Math.cos(yaw));
         }
         
-        var posDiff = [0, 0, 0];
         if (speed != 0) {
           var dist = speed * elapsed;
-          posDiff[0] += cameraDir[0] * dist;
-          posDiff[1] += cameraDir[1] * dist;
+          
+          var newX = pos[0] + cameraDir[0] * dist;
+          var newY = pos[1] + cameraDir[1] * dist;
+          
+          if (!isCollision(newX, newY, cameraDir, speed)) {
+            pos[0] = newX;
+            pos[1] = newY;
+          }          
         }
         
         if (horizontalSpeed != 0) {
           var horizontalDir = [-cameraDir[1], cameraDir[0]];
           var dist = horizontalSpeed * elapsed;
-          posDiff[0] += horizontalDir[0] * dist;
-          posDiff[1] += horizontalDir[1] * dist;
+          
+          var newX = pos[0] + horizontalDir[0] * dist;
+          var newY = pos[1] + horizontalDir[1] * dist;
+          
+          if (!isCollision(newX, newY, horizontalDir, horizontalSpeed)) {
+            pos[0] = newX;
+            pos[1] = newY;
+          }
         }
+        
         if (jumpSpeed != 0) {
-          if (jumpSpeed > 0 && pos[2] >= 1.4) {
+          if (jumpSpeed > 0 && pos[2] >= 0.8) {
             jumpSpeed = -jumpSpeed;            
           } else if (jumpSpeed < 0 && pos[2] <= 0) {
             jumpSpeed = 0;
             pos[2] = 0;
           } else {
-            posDiff[2] += jumpSpeed * elapsed;
+            pos[2] += jumpSpeed * elapsed;
           }
         } else if (speed != 0 || horizontalSpeed != 0) {
           // Apply jogging height variation
           joggingAngle += elapsed * 0.015;
           pos[2] = Math.sin(joggingAngle) / 160;
-        }
-        
-        // Apply position change
-        glm.vec3.add(pos, pos, posDiff);
+        }        
       }
       
       lastTime = now;
@@ -143,6 +168,7 @@ define(['gl-matrix'], function(glm) {
       var currentPos = glm.vec3.clone(pos);
       // Adjust for player's height
       glm.vec3.add(currentPos, currentPos, [0, 0, 0.5]);
+      
       return currentPos;
     }
     
