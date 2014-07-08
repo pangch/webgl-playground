@@ -54,7 +54,9 @@ define(['./shader', './world', './camera', 'gl-matrix'], function(shader, world,
     glm.mat4.identity(mvMatrix);
     
     drawObject(world.objects.floor);
-    drawObject(world.objects.walls);
+    for (var i = 0; i < world.objects.walls.length; i++) {
+      drawObject(world.objects.walls[i]);
+    }    
   };
   
   var animFramRequest;
