@@ -1,4 +1,4 @@
-define(['./scene', './models', './camera'], function(scene, models, camera) {
+define(['./scene', './world', './camera'], function(scene, world, camera) {
 
 	var initGL = function(canvas) {
     var gl = canvas.get(0).getContext("experimental-webgl");      
@@ -22,7 +22,7 @@ define(['./scene', './models', './camera'], function(scene, models, camera) {
 
 	return {
     load: function(callback) {
-      models.load(callback);
+      world.load(callback);
     },
 
 		run: function(canvas, dashboard) {

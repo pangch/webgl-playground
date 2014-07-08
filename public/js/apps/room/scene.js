@@ -1,4 +1,4 @@
-define(['./shader', './models', './camera', 'gl-matrix'], function(shader, models, camera, glm) {
+define(['./shader', './world', './camera', 'gl-matrix'], function(shader, world, camera, glm) {
   
   var gl;
   var params;
@@ -53,8 +53,8 @@ define(['./shader', './models', './camera', 'gl-matrix'], function(shader, model
     
     glm.mat4.identity(mvMatrix);
     
-    drawObject(models.objects.floor);
-    drawObject(models.objects.walls);
+    drawObject(world.objects.floor);
+    drawObject(world.objects.walls);
   };
   
   var animFramRequest;
@@ -71,7 +71,7 @@ define(['./shader', './models', './camera', 'gl-matrix'], function(shader, model
       params = _params;
       
       shader.init(gl);
-      models.init(gl);
+      world.init(gl);
       
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
       gl.enable(gl.DEPTH_TEST);

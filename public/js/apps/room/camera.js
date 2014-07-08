@@ -42,20 +42,20 @@ define(['gl-matrix'], function(glm) {
     
     if (pressedKeys[87]) {
       // W
-      speed = 0.001;
+      speed = 0.003;
     } else if (pressedKeys[83]) {
       // S
-      speed = -0.001;
+      speed = -0.003;
     } else {
       speed = 0;
     }
     
     if (pressedKeys[65]) {
       // A
-      horizontalSpeed = 0.001;
+      horizontalSpeed = 0.003;
     } else if (pressedKeys[68]) {
       // D
-      horizontalSpeed = -0.001;
+      horizontalSpeed = -0.003;
     } else {
       horizontalSpeed = 0;
     }
@@ -63,7 +63,7 @@ define(['gl-matrix'], function(glm) {
     if (pressedKeys[32]) {
       // Space
       if (jumpSpeed == 0) {
-        jumpSpeed = 0.0014;
+        jumpSpeed = 0.004;
       }
     }
   };
@@ -110,7 +110,7 @@ define(['gl-matrix'], function(glm) {
           posDiff[1] += horizontalDir[1] * dist;
         }
         if (jumpSpeed != 0) {
-          if (jumpSpeed > 0 && pos[2] >= 0.5) {
+          if (jumpSpeed > 0 && pos[2] >= 1.4) {
             jumpSpeed = -jumpSpeed;            
           } else if (jumpSpeed < 0 && pos[2] <= 0) {
             jumpSpeed = 0;
@@ -142,7 +142,7 @@ define(['gl-matrix'], function(glm) {
     getPosition: function() {
       var currentPos = glm.vec3.clone(pos);
       // Adjust for player's height
-      glm.vec3.add(currentPos, currentPos, [0, 0, 0.2]);
+      glm.vec3.add(currentPos, currentPos, [0, 0, 0.5]);
       return currentPos;
     }
     
