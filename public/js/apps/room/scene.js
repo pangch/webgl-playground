@@ -73,7 +73,11 @@ define(['./shader', './world', './camera', './mat', 'gl-matrix'], function(shade
     drawObject(world.objects.floor);
     for (var i = 0; i < world.objects.walls.length; i++) {
       drawObject(world.objects.walls[i]);
-    }    
+    }
+    
+    // Disable lighting when drawing sky
+    gl.uniform1i(shader.useLightingUniform, false);
+    drawObject(world.objects.sky);    
   };
   
   var animFramRequest;

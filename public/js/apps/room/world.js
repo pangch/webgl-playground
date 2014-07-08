@@ -1,10 +1,12 @@
-define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
+define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assetsStr) {
 
-  var floorImage = null;
+  var floorImage = null, skyImage = null;
   var wallImage1 = null, wallImage2 = null, wallImage3 = null;
   
   var heightMap, textureMap;
   var worldWidth, worldHeight;
+  
+  var assets = JSON.parse(assetsStr);
   
   return {
     load: function(callback) {
@@ -13,12 +15,14 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
         utils.loadImage('images/floor.jpg'),
         utils.loadImage('images/wall1.jpg'),
         utils.loadImage('images/wall2.jpg'),
-        utils.loadImage('images/wall3.jpg'))
-        .done(function(floor, wall1, wall2, wall3) {
+        utils.loadImage('images/wall3.jpg'),
+        utils.loadImage('images/sky.jpg'))
+        .done(function(floor, wall1, wall2, wall3, sky) {
           floorImage = floor;
           wallImage1 = wall1;
           wallImage2 = wall2;
           wallImage3 = wall3;
+          skyImage = sky;
           
           callback();
         }).fail(function(err) {
@@ -47,6 +51,16 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
       };
       this.objects.floor = utils.buildModelObject(gl, floor);
       this.objects.floor.texture = utils.buildTexture(gl, floorImage);
+      
+      // Generate sky object
+      var sky = {
+        vertices: [-5000.0, -5000.0, 20.0, 5000.0, -5000.0, 20.0, 5000.0, 5000.0, 20.0, -5000.0, 5000.0, 20.0],
+        textureCoords: [0.0, 0.0, 500.0, 0.0, 500.0, 500.0, 0.0, 500.0],
+        normals: [0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1],
+        indices: [0, 1, 2, 0, 2, 3]
+      };
+      this.objects.sky = utils.buildModelObject(gl, sky);
+      this.objects.sky.texture = utils.buildTexture(gl, skyImage);
       
       // Generate walls
       var walls = [
@@ -127,7 +141,6 @@ define(['./utils', 'jquery', 'text!./assets.json'], function(utils, $, assets) {
     },
     
     init: function(gl) {
-      assets = JSON.parse(assets);
       this.initWithWorld(gl, assets.worlds.default);
     }
     
