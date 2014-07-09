@@ -1,18 +1,28 @@
-define(['gl-matrix'], function(glm) {
-  var Solid = function(polygons) {
-    this.polygons = polygons;
+define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
+  var Solid = function(bsp) {
+    this.bsp = bsp;
+    bsp.buildAllPolygonsIfNeeded();
+    
+    this.polygons = bsp.allPolygons;
+    console.log("Output Polygons: ");
+    for(var i = 0; i < this.polygons.length; i++) {
+      this.polygons[i].print();
+    }
   };
   
-  Solid.fromPolygons = function(polygons) {
-    return new Solid(polygons);
+  Solid.fromPolygons = function(polygons) {    
+    console.log("Input Polygons: ");
+    for(var i = 0; i < polygons.length; i++) {
+      polygons[i].print();
+    }
+    return new Solid(BSPTree.fromPolygons(polygons));
   }
   
-  var d = false;
   Solid.prototype = {
     toTriangleList: function() {
       var vertexList = [], normalList = [], indexList = [];
       for (var i = 0; i < this.polygons.length; i++) {
-        var triangles = this.polygons[i].toTriangleList(indexList.length);
+        var triangles = this.polygons[i].toTriangleList(vertexList.length / 3);
         Array.prototype.push.apply(vertexList, triangles.vertices);
         Array.prototype.push.apply(normalList, triangles.normals);
         Array.prototype.push.apply(indexList, triangles.indices);
@@ -47,6 +57,7 @@ define(['gl-matrix'], function(glm) {
         obj.indices = indicesBuffer;
         obj.indexCount = model.indices.length;
       }
+
       this.buffers = obj;
     },
     

@@ -75,7 +75,7 @@ requirejs(['jquery', 'spin'], function($, Spinner) {
         }
         
         canvas.addClass('error');
-        info.html(e);
+        info.html(e.message + '<br/><br/>' + e.stack.replace(/(?:\r\n|\r|\n)/g, '<br />'));
         info.addClass('error');
       }    
     });

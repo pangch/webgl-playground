@@ -4,7 +4,7 @@ define(['./scene', './world', './camera'], function(scene, world, camera) {
     var gl = canvas.get(0).getContext("experimental-webgl");      
     
     if (!gl) {
-      throw "Failed to initialize WebGL.";
+      throw new Error("Failed to initialize WebGL.");
     }
     return gl;
   };

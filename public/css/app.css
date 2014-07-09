@@ -33,7 +33,10 @@ div.canvas .info {
 }
 
 div.canvas .info.error {
+  display: block;
   color: #f22;
+  max-height: 200px;
+  overflow: auto;
 }
 
 div.dashboard {

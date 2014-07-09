@@ -8,7 +8,7 @@ define(function() {
 			gl.compileShader(shader);
 
 			if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-		  	throw gl.getShaderInfoLog(shader);
+		  	throw new Error(gl.getShaderInfoLog(shader));
 			}
 
 			return shader;

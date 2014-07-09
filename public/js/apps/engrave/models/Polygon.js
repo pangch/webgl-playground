@@ -1,9 +1,10 @@
 define(['./Plane', 'gl-matrix'], function(Plane, glm) {
   var Polygon = function(vertices) {
     this.vertices = vertices;
-    this.plane = Plane.fromVetices(vertices[0], vertices[1], vertices[2]);
+    this.plane = Plane.fromPoints(vertices[0], vertices[1], vertices[2]);
   };
   
+  // The vertices needs to be coplanar and forming a convex loop
   Polygon.fromVertices = function(vertices) {
     return new Polygon(vertices);    
   };
@@ -25,6 +26,17 @@ define(['./Plane', 'gl-matrix'], function(Plane, glm) {
         normals: normalList,
         indices: indexList
       };
+    },
+    
+    print: function() {
+      if (this.vertices) {
+        console.log('Polygon:', this.vertices.map(function(ver) { 
+          return '[' + ver.join(',') + ']'
+        }).join(", "));
+      } else {
+        console.log('Polygon: No vertices');
+      }
+      
     }
   }
   

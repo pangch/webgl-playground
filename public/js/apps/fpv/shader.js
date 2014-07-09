@@ -9,7 +9,7 @@ define(['./utils', 'text!./vertex.glsl', 'text!./fragment.glsl'], function(utils
 	    gl.linkProgram(program);
 
 	    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-	      throw "Failed to initialise shaders";
+	      throw new Error("Failed to initialise shaders");
 	    }
 
 	    this.program = program;
