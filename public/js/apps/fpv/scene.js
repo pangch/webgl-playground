@@ -1,4 +1,4 @@
-define(['./shader', './world', './camera', './math', 'gl-matrix'], function(shader, world, camera, mat, glm) {
+define(['./shader', './world', './camera', './math', 'gl-matrix'], function(shader, world, camera, math, glm) {
   
   var gl;
   var params;
