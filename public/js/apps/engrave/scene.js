@@ -10,7 +10,8 @@ define(['./shader', './models', './camera', 'gl-matrix'], function(shader, model
     gl.uniformMatrix4fv(shader.pMatrixUniform, false, pMatrix);
     gl.uniformMatrix4fv(shader.mvMatrixUniform, false, mvMatrix);    
   };
-
+  
+  var solid;
   var drawScene = function() {
     var width = params.getViewportWidth();
     var height = params.getViewportHeight();
@@ -29,11 +30,7 @@ define(['./shader', './models', './camera', 'gl-matrix'], function(shader, model
     
     setMatrixUniforms();
     
-    gl.bindBuffer(gl.ARRAY_BUFFER, models.triangleVertexPosition);
-    gl.vertexAttribPointer(shader.vertexPositionAttribute, models.triangleVertexPosition.itemSize, gl.FLOAT, false, 0, 0);
-    
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, models.triangleIndices);
-    gl.drawElements(gl.TRIANGLES, models.triangleIndices.numItems, gl.UNSIGNED_SHORT, 0);
+    solid.draw(gl, shader);
   };
   
   var animFramRequest;
@@ -45,12 +42,24 @@ define(['./shader', './models', './camera', 'gl-matrix'], function(shader, model
   };
 
   return {
+    initScene: function() {
+      var poly = models.Polygon.fromVertices([
+        [0.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0],
+        [1.0, 1.0, 0.0],
+        [0.5, 1.5, 0.0],
+        [0.0, 1.0, 0.0]
+      ]);
+      solid = models.Solid.fromPolygons([poly]);
+      solid.buildBuffers(gl);
+    },
+    
     init: function(_gl, _params) {
       gl = _gl; 
       params = _params;
       
       shader.init(gl);
-      models.init(gl);
+      this.initScene();
       
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
       gl.enable(gl.DEPTH_TEST);

@@ -52,11 +52,7 @@ define(['gl-matrix'], function(glm) {
         var elapsed = now - lastTime;
 
         xRot += xSpeed * elapsed;
-        yRot += ySpeed * elapsed;
-        
-        if (xSpeed != 0 || ySpeed != 0) {
-          console.log("XRot", xRot, "YRot", yRot);
-        }
+        yRot += ySpeed * elapsed;        
       }
       
       lastTime = now;

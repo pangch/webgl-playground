@@ -110,8 +110,7 @@ define(['./shader', './world', './camera', './math', 'gl-matrix'], function(shad
     
     handleKeyEvent: function(evt) {
       if (evt.type === 'keydown' && evt.keyCode === 76) {
-        useLighting = !useLighting;
-        console.log("Use lighting: ", useLighting);
+        useLighting = !useLighting;        
       }
       return true;
     }
