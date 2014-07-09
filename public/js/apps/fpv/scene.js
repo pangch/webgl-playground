@@ -1,4 +1,4 @@
-define(['./shader', './world', './camera', './mat', 'gl-matrix'], function(shader, world, camera, mat, glm) {
+define(['./shader', './world', './camera', './math', 'gl-matrix'], function(shader, world, camera, mat, glm) {
   
   var gl;
   var params;
@@ -13,7 +13,7 @@ define(['./shader', './world', './camera', './mat', 'gl-matrix'], function(shade
     gl.uniformMatrix4fv(shader.mvMatrixUniform, false, mvMatrix);
     
     var normalMatrix = glm.mat3.create();
-    mat.toInverseMat3(mvMatrix, normalMatrix);
+    math.mat4ToInverseMat3(mvMatrix, normalMatrix);
     glm.mat3.transpose(normalMatrix, normalMatrix);
     gl.uniformMatrix3fv(shader.nMatrixUniform, false, normalMatrix);
   };

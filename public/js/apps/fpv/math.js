@@ -1,6 +1,6 @@
 define(['gl-matrix'], function(glm) {
   return {
-    toInverseMat3: function(mat, dest) {
+    mat4ToInverseMat3: function(mat, dest) {
       // Cache the matrix values (makes for huge speed increases!)
       var a00 = mat[0], a01 = mat[1], a02 = mat[2];
       var a10 = mat[4], a11 = mat[5], a12 = mat[6];
