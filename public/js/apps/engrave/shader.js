@@ -34,7 +34,7 @@ define(['./utils', 'text!./vertex.glsl', 'text!./fragment.glsl'], function(utils
       this.useLightingUniform = gl.getUniformLocation(program, "uUseLighting");
       this.ambientColorUniform = gl.getUniformLocation(program, "uAmbientColor");      
       this.pointLightingColorUniform = gl.getUniformLocation(program, "uPointLightingColor");
-      this.pointLightingDirectionUniform = gl.getUniformLocation(program, "uPointLightingDirection");
+      this.pointLightingPositionUniform = gl.getUniformLocation(program, "uPointLightingPosition");
 		}
 	};
 });

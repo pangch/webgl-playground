@@ -16,13 +16,21 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     gl.uniformMatrix3fv(shader.nMatrixUniform, false, normalMatrix); 
   };
   
-  var solid = null;
+  var solidA, solidB;
+  
+  var initScene = function() {
+    solidA = models.Primitives.cube([-2.0, -2.0, -2.0], 4.0);
+    solidA.color = [1.0, 0.5, 0.5, 1.0];
+    solidA.buildBuffers(gl);
+    
+    solidB = models.Primitives.cube([-1.0, -1.0, -1.0], 5.0);
+    solidB.color = [0.5, 1.0, 0.5, 1.0];
+    solidB.buildBuffers(gl);
+  };
+  
   var drawScene = function() {
     
-    if (!solid) {
-      solid = models.Primitives.cube([-1.0, -1.0, -1.0], 2.0);
-      solid.buildBuffers(gl);
-    }
+    gl.useProgram(shader.program);
     
     var width = params.getViewportWidth();
     var height = params.getViewportHeight();
@@ -45,11 +53,11 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     gl.uniform1i(shader.useLightingUniform, true);
     gl.uniform3f(shader.ambientColorUniform, 0.2, 0.2, 0.2);
 
-    var lightingDirection = glm.vec3.normalize(glm.vec3.create(), [1.0, 1.0, 1.0]);    
-    gl.uniform3fv(shader.pointLightingDirectionUniform, lightingDirection);
-    gl.uniform3f(shader.pointLightingColorUniform, 1.0, 0.95, 0.9);
+    gl.uniform3f(shader.pointLightingPositionUniform, 2.5, 0.0, 0.0);
+    gl.uniform3f(shader.pointLightingColorUniform, 0.8, 0.8, 0.8);
     
-    solid.draw(gl, shader);
+    solidA.draw(gl, shader);
+    solidB.draw(gl, shader);
   };
   
   var animFramRequest;
@@ -65,6 +73,7 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
       gl = _gl; 
       params = _params;
       
+      initScene();
       shader.init(gl);
       
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -76,6 +85,7 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     },
     
     exit: function() {
+      solid = null;
       cancelRequestAnimFrame(animFramRequest);
     }
   };
