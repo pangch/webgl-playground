@@ -43,44 +43,7 @@ define(['./shader', './models', './camera', 'gl-matrix'], function(shader, model
 
   return {
     initScene: function() {
-      var poly = [
-            models.Polygon.fromVertices([
-              [0.0, 0.0, 0.0],
-              [1.0, 0.0, 0.0],
-              [1.0, 1.0, 0.0],
-              [0.0, 1.0, 0.0]
-            ]),
-            models.Polygon.fromVertices([
-              [1.0, 0.0, 0.0],
-              [1.0, 0.0, 1.0],
-              [1.0, 1.0, 1.0],
-              [1.0, 1.0, 0.0]
-            ]),
-            models.Polygon.fromVertices([
-              [0.0, 1.0, 1.0],
-              [1.0, 1.0, 1.0],
-              [1.0, 0.0, 1.0],
-              [0.0, 0.0, 1.0]
-            ]),
-            models.Polygon.fromVertices([
-              [0.0, 1.0, 0.0],
-              [0.0, 1.0, 1.0],
-              [0.0, 0.0, 1.0],
-              [0.0, 0.0, 0.0]
-            ]),
-            models.Polygon.fromVertices([
-              [0.0, 0.0, 0.0],
-              [0.0, 0.0, 1.0],
-              [1.0, 0.0, 1.0],
-              [1.0, 0.0, 0.0]
-            ]),
-            models.Polygon.fromVertices([
-              [1.0, 1.0, 0.0],
-              [1.0, 1.0, 1.0],
-              [0.0, 1.0, 1.0],
-              [0.0, 1.0, 0.0]
-            ])];
-      solid = models.Solid.fromPolygons(poly);
+      solid = models.Primitives.cube([1.0, 1.0, 1.0], 3.0);
       solid.buildBuffers(gl);
     },
     

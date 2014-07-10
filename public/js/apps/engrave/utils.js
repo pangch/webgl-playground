@@ -12,6 +12,10 @@ define(function() {
 			}
 
 			return shader;
-		}    
+		},
+    
+    drawAxis: function(gl) {
+      
+    }
 	}
 });

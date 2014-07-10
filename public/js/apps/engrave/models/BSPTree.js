@@ -23,7 +23,7 @@ define(['./Plane', './Polygon', '../math', 'gl-matrix'], function(Plane, Polygon
     var vertices = polygon.vertices;
     var dists = [];
     var vertexTypes = []
-    
+
     for (var i = 0; i < vertices.length; i++) {
       var dist = plane.distToPoint(vertices[i]); // Position could be 1, 0, -1
       var position = math.floatSign(dist);
