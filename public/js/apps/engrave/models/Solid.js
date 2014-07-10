@@ -61,10 +61,9 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
       this.buffers = obj;
     },
     
-    draw: function(gl, shader) {
-      
-      // gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.normals);
-      // gl.vertexAttribPointer(shader.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+    draw: function(gl, shader) {      
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.normals);
+      gl.vertexAttribPointer(shader.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
     
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.vertices);
       gl.vertexAttribPointer(shader.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);

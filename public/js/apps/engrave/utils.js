@@ -52,6 +52,8 @@ define(function() {
           initBuffer(gl);
         }
         
+        gl.uniform1i(shader.useLightingUniform, false);
+        
         gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
         gl.vertexAttribPointer(shader.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
         

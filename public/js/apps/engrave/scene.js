@@ -1,4 +1,4 @@
-define(['./shader', './models', './camera', './utils', 'gl-matrix'], function(shader, models, camera, utils, glm) {
+define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], function(shader, models, camera, utils, math, glm) {
   
   var gl;
   var params;
@@ -8,11 +8,22 @@ define(['./shader', './models', './camera', './utils', 'gl-matrix'], function(sh
 
   var setMatrixUniforms = function() {
     gl.uniformMatrix4fv(shader.pMatrixUniform, false, pMatrix);
-    gl.uniformMatrix4fv(shader.mvMatrixUniform, false, mvMatrix);    
+    gl.uniformMatrix4fv(shader.mvMatrixUniform, false, mvMatrix);
+    
+    var normalMatrix = glm.mat3.create();
+    math.mat4ToInverseMat3(mvMatrix, normalMatrix);
+    glm.mat3.transpose(normalMatrix, normalMatrix);
+    gl.uniformMatrix3fv(shader.nMatrixUniform, false, normalMatrix); 
   };
   
-  var solid;
+  var solid = null;
   var drawScene = function() {
+    
+    if (!solid) {
+      solid = models.Primitives.cube([-1.0, -1.0, -1.0], 2.0);
+      solid.buildBuffers(gl);
+    }
+    
     var width = params.getViewportWidth();
     var height = params.getViewportHeight();
     
@@ -29,8 +40,15 @@ define(['./shader', './models', './camera', './utils', 'gl-matrix'], function(sh
     glm.mat4.rotate(mvMatrix, mvMatrix, camera.getYRot(), [1, 0, 0]);
     
     setMatrixUniforms();
+    utils.drawAxis(gl, shader);
+    
+    gl.uniform1i(shader.useLightingUniform, true);
+    gl.uniform3f(shader.ambientColorUniform, 0.2, 0.2, 0.2);
 
-    utils.drawAxis(gl, shader);    
+    var lightingDirection = glm.vec3.normalize(glm.vec3.create(), [1.0, 1.0, 1.0]);    
+    gl.uniform3fv(shader.pointLightingDirectionUniform, lightingDirection);
+    gl.uniform3f(shader.pointLightingColorUniform, 1.0, 0.95, 0.9);
+    
     solid.draw(gl, shader);
   };
   
@@ -43,17 +61,11 @@ define(['./shader', './models', './camera', './utils', 'gl-matrix'], function(sh
   };
 
   return {
-    initScene: function() {
-      solid = models.Primitives.cube([1.0, 1.0, 1.0], 3.0);
-      solid.buildBuffers(gl);
-    },
-    
     init: function(_gl, _params) {
       gl = _gl; 
       params = _params;
       
       shader.init(gl);
-      this.initScene();
       
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
       gl.enable(gl.DEPTH_TEST);
