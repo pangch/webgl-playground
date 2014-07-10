@@ -1,4 +1,4 @@
-define(['./shader', './models', './camera', 'gl-matrix'], function(shader, models, camera, glm) {
+define(['./shader', './models', './camera', './utils', 'gl-matrix'], function(shader, models, camera, utils, glm) {
   
   var gl;
   var params;
@@ -29,7 +29,8 @@ define(['./shader', './models', './camera', 'gl-matrix'], function(shader, model
     glm.mat4.rotate(mvMatrix, mvMatrix, camera.getYRot(), [1, 0, 0]);
     
     setMatrixUniforms();
-    
+
+    utils.drawAxis(gl, shader);    
     solid.draw(gl, shader);
   };
   

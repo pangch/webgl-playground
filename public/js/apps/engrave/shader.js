@@ -22,7 +22,7 @@ define(['./utils', 'text!./vertex.glsl', 'text!./fragment.glsl'], function(utils
 
       // this.vertexNormalAttribute = gl.getAttribLocation(program, "aVertexNormal");
       // gl.enableVertexAttribArray(this.vertexNormalAttribute);
-      //
+
       this.vertexColorAttribute = gl.getAttribLocation(program, "aVertexColor");
       gl.enableVertexAttribArray(this.vertexColorAttribute);
       
