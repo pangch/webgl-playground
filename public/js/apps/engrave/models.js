@@ -2,19 +2,22 @@ define(['./models/BSPTree',
         './models/Plane',
         './models/Polygon',
         './models/Solid',
-        './models/Primitives'], 
+        './models/Primitives',
+        './models/Text'], 
   function(BSPTree, 
            Plane,
            Polygon,
            Solid,
-           Primitives) {
+           Primitives,
+           Text) {
 
   return {
     BSPTree: BSPTree,
     Plane: Plane,
     Polygon: Polygon,
     Solid: Solid,
-    Primitives: Primitives
+    Primitives: Primitives,
+    Text: Text
   };
   
 });

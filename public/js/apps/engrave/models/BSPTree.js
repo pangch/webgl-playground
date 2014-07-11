@@ -145,6 +145,9 @@ define(['./Plane', './Polygon', '../math', 'gl-matrix'], function(Plane, Polygon
       if (this.back) {
         backPolygons = this.back.clipPolygons(backPolygons, inside);
       } else if (!inside) {
+        // The backPolygons here falls into the back side of 
+        // every surface of the BSP tree, therefore it is
+        // inside the solid represented by the BSP tree.
         backPolygons = [];
       }
       

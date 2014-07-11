@@ -1,4 +1,4 @@
-define(['./scene', './assets', './camera'], function(scene, assets, camera) {
+define(['./scene', './camera'], function(scene, camera) {
 
 	var initGL = function(canvas) {
     var gl = canvas.get(0).getContext("experimental-webgl");      

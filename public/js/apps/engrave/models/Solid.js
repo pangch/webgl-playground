@@ -14,7 +14,7 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
     
     // Solid A - B:
     // All parts of polygons of A outside B + all parts of polygons of B inside A inverted.
-    substract: function(solid) {      
+    subtract: function(solid) {      
       var partA = this.bsp.clipInside(solid.bsp);
       var partB = solid.bsp.clipOutside(this.bsp).invert();
       var allPolygons = partA.allPolygons().concat(partB.allPolygons());
@@ -42,11 +42,17 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
       return new Solid(BSPTree.fromPolygons(allPolygons));      
     },
     
-    toTriangleList: function() {
+    translate: function(vec3) {
+      return Solid.fromPolygons(this.polygons().map(function(polygon) {
+        return polygon.translate(vec3);
+      }));
+    },
+    
+    triangulate: function() {
       var vertexList = [], normalList = [], indexList = [];
       var polygons = this.polygons();
       for (var i = 0; i < polygons.length; i++) {
-        var triangles = polygons[i].toTriangleList(vertexList.length / 3);
+        var triangles = polygons[i].triangulate(vertexList.length / 3);
         Array.prototype.push.apply(vertexList, triangles.vertices);
         Array.prototype.push.apply(normalList, triangles.normals);
         Array.prototype.push.apply(indexList, triangles.indices);
@@ -59,7 +65,7 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
     },
     
     buildBuffers: function(gl) {
-      var model = this.toTriangleList();
+      var model = this.triangulate();
       var obj = {};      
 
       var buffer = gl.createBuffer();

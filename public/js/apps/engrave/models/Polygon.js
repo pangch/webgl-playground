@@ -14,7 +14,13 @@ define(['./Plane', 'gl-matrix'], function(Plane, glm) {
       return Polygon.fromVertices(this.vertices.slice().reverse());
     },
     
-    toTriangleList: function(indexBase) {
+    translate: function(vec3) {
+      return Polygon.fromVertices(this.vertices.map(function(vertex) {
+        return [vertex[0] + vec3[0], vertex[1] + vec3[1], vertex[2] + vec3[2]];
+      }));
+    },
+    
+    triangulate: function(indexBase) {
       var vertexList = [], normalList = [], indexList = [];
       var n = this.plane.normal;
       for (var i = 0; i < this.vertices.length; i++) {
