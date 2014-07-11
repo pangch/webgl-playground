@@ -41,7 +41,7 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     
     glm.mat4.identity(mvMatrix);
     
-    glm.mat4.translate(mvMatrix, mvMatrix, [0, 0, -10]);
+    glm.mat4.translate(mvMatrix, mvMatrix, [0, 0, camera.getZPos()]);
     
     glm.mat4.rotate(mvMatrix, mvMatrix, camera.getXRot(), [0, 1, 0]);
     glm.mat4.rotate(mvMatrix, mvMatrix, camera.getYRot(), [1, 0, 0]);
