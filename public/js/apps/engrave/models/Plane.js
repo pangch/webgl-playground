@@ -28,6 +28,9 @@ define(['gl-matrix'], function(glm) {
     distToPoint: function(vec) {
       // Returns *signed* distance: N dot P + d
       return glm.vec3.dot(this.normal, vec) + this.d;
+    },
+    flip: function() {
+      return new Plane(glm.vec3.negate(glm.vec3.create(), this.normal), this.d);
     }
   }
   

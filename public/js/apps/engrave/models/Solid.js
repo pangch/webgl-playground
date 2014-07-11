@@ -1,28 +1,52 @@
 define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
   var Solid = function(bsp) {
     this.bsp = bsp;
-    bsp.buildAllPolygonsIfNeeded();
-    
-    this.polygons = bsp.allPolygons;
-    console.log("Output Polygons: ");
-    for(var i = 0; i < this.polygons.length; i++) {
-      this.polygons[i].print();
-    }
   };
   
-  Solid.fromPolygons = function(polygons) {    
-    console.log("Input Polygons: ");
-    for(var i = 0; i < polygons.length; i++) {
-      polygons[i].print();
-    }
+  Solid.fromPolygons = function(polygons) {
     return new Solid(BSPTree.fromPolygons(polygons));
   }
   
   Solid.prototype = {
+    polygons: function() {
+      return this.bsp.allPolygons();
+    },
+    
+    // Solid A - B:
+    // All parts of polygons of A outside B + all parts of polygons of B inside A inverted.
+    substract: function(solid) {      
+      var partA = this.bsp.clipInside(solid.bsp);
+      var partB = solid.bsp.clipOutside(this.bsp).invert();
+      var allPolygons = partA.allPolygons().concat(partB.allPolygons());
+
+      return new Solid(BSPTree.fromPolygons(allPolygons));
+    },
+    
+    // Solid A + B:
+    // All parts of polygons of A outside B + all parts of polygons of B outside A
+    union: function(solid) {      
+      var partA = this.bsp.clipInside(solid.bsp);
+      var partB = solid.bsp.clipInside(this.bsp);
+      var allPolygons = partA.allPolygons().concat(partB.allPolygons());
+
+      return new Solid(BSPTree.fromPolygons(allPolygons));
+    },
+    
+    // Solid A intersect B
+    // All parts of polygons of A inside B + all parts of polygons of B inside A
+    intersect: function(solid) {
+      var partA = this.bsp.clipOutside(solid.bsp);
+      var partB = solid.bsp.clipOutside(this.bsp);
+      var allPolygons = partA.allPolygons().concat(partB.allPolygons());
+
+      return new Solid(BSPTree.fromPolygons(allPolygons));      
+    },
+    
     toTriangleList: function() {
       var vertexList = [], normalList = [], indexList = [];
-      for (var i = 0; i < this.polygons.length; i++) {
-        var triangles = this.polygons[i].toTriangleList(vertexList.length / 3);
+      var polygons = this.polygons();
+      for (var i = 0; i < polygons.length; i++) {
+        var triangles = polygons[i].toTriangleList(vertexList.length / 3);
         Array.prototype.push.apply(vertexList, triangles.vertices);
         Array.prototype.push.apply(normalList, triangles.normals);
         Array.prototype.push.apply(indexList, triangles.indices);
@@ -78,6 +102,13 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
       gl.drawElements(gl.TRIANGLES, this.buffers.indexCount, gl.UNSIGNED_SHORT, 0);
       
       gl.enableVertexAttribArray(shader.vertexColorAttribute);
+    },
+    
+    print: function() {
+      var polygons = this.polygons();
+      for(var i = 0; i < polygons.length; i++) {
+        polygons[i].print();
+      }
     }
   }
   

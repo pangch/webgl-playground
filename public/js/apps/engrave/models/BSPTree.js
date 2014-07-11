@@ -84,7 +84,7 @@ define(['./Plane', './Polygon', '../math', 'gl-matrix'], function(Plane, Polygon
       // Push the polygon directly
       switch(polygonType) {
       case COPLANAR:
-        var list = glm.vec3.dot(polygon.normal, plane.normal) > 0 ? coplanar : coplanarReverse;
+        var list = glm.vec3.dot(polygon.plane.normal, plane.normal) > 0 ? coplanar : coplanarReverse;
         list.push(polygon);
         break;
       case FRONT:
@@ -125,6 +125,72 @@ define(['./Plane', './Polygon', '../math', 'gl-matrix'], function(Plane, Polygon
   };
   
   BSPTree.prototype = {
+    // Recursively remove all parts of input polygons that are inside the current BSP tree.
+    clipPolygons: function(polygons, inside) {
+      if (this.plane === null) {
+        return polygons;
+      }
+      
+      var frontPolygons = [], backPolygons = [];
+      for (var i = 0; i < polygons.length; i++) {
+        splitPolygon(polygons[i], this.plane, frontPolygons, backPolygons, frontPolygons, backPolygons);
+      }
+      
+      if (this.front) {
+        frontPolygons = this.front.clipPolygons(frontPolygons, inside);
+      } else if (inside) {
+        frontPolygons = [];
+      }
+      
+      if (this.back) {
+        backPolygons = this.back.clipPolygons(backPolygons, inside);
+      } else if (!inside) {
+        backPolygons = [];
+      }
+      
+      return frontPolygons.concat(backPolygons);
+    },
+    
+    // Recursively remove all parts of polygons of this BSP tree that are inside or outside another BSP tree.
+    clipBy: function(bsp, inside) {
+      var clippedTree = new BSPTree();
+      
+      // Clip this polygons of the current node
+      clippedTree.polygons = bsp.clipPolygons(this.polygons, inside);
+      clippedTree.plane = this.plane;
+      
+      // Recursively clip polygons of child nodes
+      clippedTree.front = this.front ? this.front.clipBy(bsp, inside) : null;
+      if (clippedTree.front && clippedTree.front.allPolygons().length === 0) {
+        clippedTree.front = null;
+      }
+      
+      clippedTree.back = this.back ? this.back.clipBy(bsp, inside) : null;
+      if (clippedTree.back && clippedTree.back.allPolygons().length === 0) {
+        clippedTree.back = null;
+      }
+      return clippedTree;
+    },
+    
+    clipInside: function(bsp) {
+      return this.clipBy(bsp, false);
+    },
+    
+    clipOutside: function(bsp) {
+      return this.clipBy(bsp, true);
+    },
+    
+    // Invert the inside / outside of this BSP
+    invert: function() {
+      var invertedTree = new BSPTree();      
+      invertedTree.polygons = this.polygons.map(function(p) { return p.flip() });
+      invertedTree.plane = this.plane.flip();
+      invertedTree.front = this.back ? this.back.invert() : null;
+      invertedTree.back = this.front ? this.front.invert() : null;
+      return invertedTree;
+    },
+        
+    // Iterate the tree
     eachNode: function(callback) {
       // In-order traversal of this tree
       if (this.front) {
@@ -136,22 +202,16 @@ define(['./Plane', './Polygon', '../math', 'gl-matrix'], function(Plane, Polygon
       }
     },
     
-    buildAllPolygons: function() {
-      // Store all polygons in this tree.
-      var allPolygons = [];
-      this.eachNode(function(node) {
-        Array.prototype.push.apply(allPolygons, node.polygons);
-      });
-      this.allPolygons = allPolygons;
-    },
-    
-    buildAllPolygonsIfNeeded: function() {
-      if (this.allPolygons) {
-        return;
-      } else {
-        this.buildAllPolygons();
-      }      
-    }
+    allPolygons: function() {
+      if (!this._allPolygons) {
+        var allPolygons = [];
+        this.eachNode(function(node) {
+          Array.prototype.push.apply(allPolygons, node.polygons);
+        });
+        this._allPolygons = allPolygons;
+      }
+      return this._allPolygons;
+    }    
   }
   
   return BSPTree;

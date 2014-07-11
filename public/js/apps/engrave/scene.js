@@ -16,16 +16,15 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     gl.uniformMatrix3fv(shader.nMatrixUniform, false, normalMatrix); 
   };
   
-  var solidA, solidB;
-  
+  var solid;
+
   var initScene = function() {
-    solidA = models.Primitives.cube([-2.0, -2.0, -2.0], 4.0);
-    solidA.color = [1.0, 0.5, 0.5, 1.0];
-    solidA.buildBuffers(gl);
+    var solidA = models.Primitives.cube([0, 0, 0], 2.0);
+    var solidB = models.Primitives.cube([1, 1, 1], 2.0);
     
-    solidB = models.Primitives.cube([-1.0, -1.0, -1.0], 5.0);
-    solidB.color = [0.5, 1.0, 0.5, 1.0];
-    solidB.buildBuffers(gl);
+    solid = solidA.intersect(solidB);    
+    solid.color = [1.0, 0.5, 0.5, 1.0];
+    solid.buildBuffers(gl);
   };
   
   var drawScene = function() {
@@ -56,8 +55,8 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     gl.uniform3f(shader.pointLightingPositionUniform, 2.5, 0.0, 0.0);
     gl.uniform3f(shader.pointLightingColorUniform, 0.8, 0.8, 0.8);
     
-    solidA.draw(gl, shader);
-    solidB.draw(gl, shader);
+    solid.draw(gl, shader);
+    // solidB.draw(gl, shader);
   };
   
   var animFramRequest;

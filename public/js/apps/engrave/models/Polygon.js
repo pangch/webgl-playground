@@ -10,6 +10,10 @@ define(['./Plane', 'gl-matrix'], function(Plane, glm) {
   };
   
   Polygon.prototype = {
+    flip: function() {
+      return Polygon.fromVertices(this.vertices.slice().reverse());
+    },
+    
     toTriangleList: function(indexBase) {
       var vertexList = [], normalList = [], indexList = [];
       var n = this.plane.normal;
@@ -31,7 +35,7 @@ define(['./Plane', 'gl-matrix'], function(Plane, glm) {
     print: function() {
       if (this.vertices) {
         console.log('Polygon:', this.vertices.map(function(ver) { 
-          return '[' + ver.join(',') + ']'
+          return '[' + ver[0] + ',' + ver[1] + ',' + ver[2] + ']';
         }).join(", "));
       } else {
         console.log('Polygon: No vertices');
