@@ -1,11 +1,25 @@
 define(['./utils', 'text!./vertex.glsl', 'text!./fragment.glsl'], function(utils, vertexShader, fragmentShader) {
+  
+  // Create a shader from source
+	var buildShader = function(gl, source, type) {
+		var shader = gl.createShader(type);
+		gl.shaderSource(shader, source);
+		gl.compileShader(shader);
+
+		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+	  	throw new Error(gl.getShaderInfoLog(shader));
+		}
+
+		return shader;
+	}
+  
 	return {
 		init: function(gl) {
 			// Build shader program
 			var program = gl.createProgram();
 	    
-	    gl.attachShader(program, utils.buildShader(gl, vertexShader, gl.VERTEX_SHADER));
-	    gl.attachShader(program, utils.buildShader(gl, fragmentShader, gl.FRAGMENT_SHADER));
+	    gl.attachShader(program, buildShader(gl, vertexShader, gl.VERTEX_SHADER));
+	    gl.attachShader(program, buildShader(gl, fragmentShader, gl.FRAGMENT_SHADER));
 	    gl.linkProgram(program);
 
 	    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
