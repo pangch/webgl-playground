@@ -1,7 +1,5 @@
-define(['./Polygon', './Primitives', 'text!../assets.json', 'gl-matrix'], function(Polygon, Primitives, assetsStr, glm) {
+define(['./Polygon', './Primitives', '../assets', 'gl-matrix'], function(Polygon, Primitives, assets, glm) {
   
-  var assets = JSON.parse(assetsStr);
-   
   var cache = {};
   
   return {
@@ -11,7 +9,7 @@ define(['./Polygon', './Primitives', 'text!../assets.json', 'gl-matrix'], functi
         return cached;
       }
       
-      var def = assets[char];
+      var def = assets.text[char];
       if (typeof def === 'undefined') {
         return null;
       }

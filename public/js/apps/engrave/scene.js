@@ -16,6 +16,7 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     gl.uniformMatrix3fv(shader.nMatrixUniform, false, normalMatrix); 
   };
   
+  var baseSolid;
   var solid;
 
   var initScene = function() {    
@@ -26,7 +27,12 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     solid.buildBuffers(gl);
   };
   
+  var updateScene = function() {
+    
+  }
+  
   var drawScene = function() {
+    updateScene();
     
     gl.useProgram(shader.program);
     
