@@ -36,17 +36,6 @@ define(['./Plane', 'gl-matrix'], function(Plane, glm) {
         normals: normalList,
         indices: indexList
       };
-    },
-    
-    print: function() {
-      if (this.vertices) {
-        console.log('Polygon:', this.vertices.map(function(ver) { 
-          return '[' + ver[0] + ',' + ver[1] + ',' + ver[2] + ']';
-        }).join(", "));
-      } else {
-        console.log('Polygon: No vertices');
-      }
-      
     }
   }
   

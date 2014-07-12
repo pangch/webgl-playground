@@ -46,7 +46,6 @@ define(['gl-matrix'], function(glm) {
   
   return {
     handleKeyEvent: function(evt) {
-      console.log(evt.keyCode);
       if ([37, 38, 39, 40, 219, 221].indexOf(evt.keyCode) !== -1) {
         if (evt.type === 'keydown') {
           pressedKeys[evt.keyCode] = true;

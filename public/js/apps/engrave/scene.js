@@ -18,10 +18,9 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
   
   var solid;
 
-  var initScene = function() {
-    
-    var solidA = models.Text.char('r', 1.0).translate([-2.5, -2.5, 0.0]);
-    var solidB = models.Text.char('z', 1.0).translate([3.0, -2.5, 0.0]);
+  var initScene = function() {    
+    var solidA = models.Text.char('p', 1.0).translate([-2.5, -2.5, 0.0]);
+    var solidB = models.Text.string('aiueo test', 1.0).translate([3.0, -2.5, 0.0]);
     solid = solidA.union(solidB);
     solid.color = [1.0, 0.5, 0.5, 1.0];    
     solid.buildBuffers(gl);
@@ -56,7 +55,6 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     gl.uniform3f(shader.pointLightingColorUniform, 0.8, 0.8, 0.8);
     
     solid.draw(gl, shader);
-    // solidB.draw(gl, shader);
   };
   
   var animFramRequest;

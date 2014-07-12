@@ -108,13 +108,6 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
       gl.drawElements(gl.TRIANGLES, this.buffers.indexCount, gl.UNSIGNED_SHORT, 0);
       
       gl.enableVertexAttribArray(shader.vertexColorAttribute);
-    },
-    
-    print: function() {
-      var polygons = this.polygons();
-      for(var i = 0; i < polygons.length; i++) {
-        polygons[i].print();
-      }
     }
   }
   
