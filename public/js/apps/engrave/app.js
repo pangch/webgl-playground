@@ -28,6 +28,8 @@ define(['./scene', './camera', 'text!./dashboard.html'], function(scene, camera,
             depth = 1.0;
           } else if (depth > 5.0) {
             depth = 5.0;
+          } else if (isNaN(depth)) {
+            depth = 2.0;
           }
           return depth;
         } catch (e) {

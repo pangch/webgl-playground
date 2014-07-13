@@ -35,10 +35,10 @@ define(['gl-matrix'], function(glm) {
     
     if (pressedKeys[219]) {
       // [
-      zSpeed = 0.01;
+      zSpeed = 0.05;
     } else if (pressedKeys[221]) {
       // ]
-      zSpeed = -0.01;
+      zSpeed = -0.05;
     } else {
       zSpeed = 0;
     }

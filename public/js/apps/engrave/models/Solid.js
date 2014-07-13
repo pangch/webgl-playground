@@ -70,8 +70,27 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
       };
     },
     
-    buildBuffers: function(gl) {
-      var model = this.triangulate();
+    wireframe: function() {
+      var vertexList = [], normalList = [], indexList = [];
+      var polygons = this.polygons();
+      for (var i = 0; i < polygons.length; i++) {
+        var lines = polygons[i].wireframe(vertexList.length / 3);
+        Array.prototype.push.apply(vertexList, lines.vertices);
+        Array.prototype.push.apply(normalList, lines.normals);
+        Array.prototype.push.apply(indexList, lines.indices);
+      }
+      return {
+        vertices: vertexList,
+        normals: normalList,
+        indices: indexList
+      };
+    },
+    
+    buildBuffers: function(gl, faces) {
+      if (typeof faces === 'undefined') {
+        faces = true;
+      }
+      var model = faces ? this.triangulate() : this.wireframe();
       var obj = {};      
 
       var buffer = gl.createBuffer();
@@ -93,7 +112,8 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
         obj.indices = indicesBuffer;
         obj.indexCount = model.indices.length;
       }
-
+      
+      obj.faces = faces;
       this.buffers = obj;
     },
     
@@ -113,7 +133,8 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
       }
     },
     
-    draw: function(gl, shader) {            
+    draw: function(gl, shader, lines) {
+      
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.normals);
       gl.vertexAttribPointer(shader.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
     
@@ -127,7 +148,9 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
       gl.vertexAttrib4fv(shader.vertexColorAttribute, this.color);
       
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
-      gl.drawElements(gl.TRIANGLES, this.buffers.indexCount, gl.UNSIGNED_SHORT, 0);
+      
+      var type = this.buffers.faces ? gl.TRIANGLES : gl.LINES;
+      gl.drawElements(type, this.buffers.indexCount, gl.UNSIGNED_SHORT, 0);
       
       gl.enableVertexAttribArray(shader.vertexColorAttribute);
     }

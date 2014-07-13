@@ -42,6 +42,28 @@ define(['./Plane', 'gl-matrix'], function(Plane, glm) {
         normals: normalList,
         indices: indexList
       };
+    },
+    
+    wireframe: function(indexBase) {
+      var vertexList = [], normalList = [], indexList = [];
+      var n = this.plane.normal;
+      for (var i = 0; i < this.vertices.length; i++) {
+        var v = this.vertices[i];
+        vertexList.push(v[0], v[1], v[2]);
+        normalList.push(n[0], n[1], n[2]);
+      }
+      for (var i = 0; i < this.vertices.length; i++) {
+        var next = i + 1;
+        if (next === this.vertices.length) {
+          next = 0;
+        }
+        indexList.push(indexBase + i, indexBase + next);
+      }
+      return {
+        vertices: vertexList,
+        normals: normalList,
+        indices: indexList
+      };
     }
   }
   

@@ -89,13 +89,15 @@ define(['./shader', './models', './camera', './assets', './utils', './math', 'gl
     
     gl.viewport(0, 0, width, height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
+    
+    // Camera position
     glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 500.0);
     glm.mat4.rotate(pMatrix, pMatrix, -.2, [1, -1, -1]);
     glm.mat4.translate(pMatrix, pMatrix, [10, 10, -80.0]);
     
     glm.mat4.identity(mvMatrix);
     
+    // Model position
     glm.mat4.translate(mvMatrix, mvMatrix, [0, 0, camera.getZPos()]);
     
     glm.mat4.rotate(mvMatrix, mvMatrix, camera.getXRot(), [0, 1, 0]);
@@ -103,12 +105,14 @@ define(['./shader', './models', './camera', './assets', './utils', './math', 'gl
     
     setMatrixUniforms();
     
+    // Lighting
     gl.uniform1i(shader.useLightingUniform, true);
-    gl.uniform3f(shader.ambientColorUniform, 0.4, 0.4, 0.4);
-
-    gl.uniform3f(shader.pointLightingPositionUniform, 20.0, 0.0, 35.0);
-    gl.uniform3f(shader.pointLightingColorUniform, 0.6, 0.6, 0.6);
+    gl.uniform3f(shader.ambientColorUniform, 0.5, 0.5, 0.5);
     
+    gl.uniform3f(shader.pointLightingPositionUniform, 20.0, 0.0, 30.0);
+    gl.uniform3f(shader.pointLightingColorUniform, 0.5, 0.5, 0.5);
+    
+    // Draw model
     solid.draw(gl, shader);
   };
   
