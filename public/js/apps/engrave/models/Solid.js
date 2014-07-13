@@ -48,6 +48,12 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
       }));
     },
     
+    scale: function(vec3) {
+      return Solid.fromPolygons(this.polygons().map(function(polygon) {
+        return polygon.scale(vec3);
+      }));
+    },
+    
     triangulate: function() {
       var vertexList = [], normalList = [], indexList = [];
       var polygons = this.polygons();
@@ -89,6 +95,22 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
       }
 
       this.buffers = obj;
+    },
+    
+    deleteBuffers: function(gl) {
+      if (this.buffers) {
+        var buffers = this.buffers;
+        if (buffers.vertices) {
+          gl.deleteBuffer(buffers.vertices);
+        }
+        if (buffers.normals) {
+          gl.deleteBuffer(buffers.normals);
+        }
+        if (buffers.indices) {
+          gl.deleteBuffer(buffers.indices);
+        }
+        this.buffers = null;
+      }
     },
     
     draw: function(gl, shader) {            

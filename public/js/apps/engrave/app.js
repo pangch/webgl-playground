@@ -1,4 +1,4 @@
-define(['./scene', './camera'], function(scene, camera) {
+define(['./scene', './camera', 'text!./dashboard.html'], function(scene, camera, dashboardHtml) {
 
 	var initGL = function(canvas) {
     var gl = canvas.get(0).getContext("experimental-webgl");      
@@ -15,6 +15,28 @@ define(['./scene', './camera'], function(scene, camera) {
       },
       getViewportHeight: function() {
         return canvas.height();
+      },
+      
+      getText: function() {
+        return $('#engrave-text').val().toLowerCase().substring(0, 25);        
+      },
+      
+      getDepth: function() {
+        try {
+          var depth = parseFloat($('#engrave-depth').val());
+          if (depth < 1.0) {
+            depth = 1.0;
+          } else if (depth > 5.0) {
+            depth = 5.0;
+          }
+          return depth;
+        } catch (e) {
+          return 2.0;
+        }        
+      },
+      
+      isConvex: function() {
+        return $('#engrave-convex').is(':checked');
       }
     };
   }
@@ -26,6 +48,8 @@ define(['./scene', './camera'], function(scene, camera) {
 
 		run: function(canvas, dashboard) {
       dashboard.addClass('light');
+      dashboard.removeClass('hidden');
+      dashboard.html(dashboardHtml);
       
       scene.init(initGL(canvas), initParams(canvas));
       scene.run();

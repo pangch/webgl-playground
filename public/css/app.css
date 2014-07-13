@@ -1,5 +1,14 @@
+@font-face {
+  font-family: 'Yanone Kaffeesatz';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Yanone Kaffeesatz Regular'), local('YanoneKaffeesatz-Regular'), url(../fonts/YanoneKaffeesatz.woff) format('woff');
+}
+
 body {
 	margin: 0;
+  font-family: "Helvetica Neue", Helvetica,Arial, sans-serif;
+  -webkit-font-smoothing: antialiased !important;  
 }
 
 div.canvas, div.dashboard {
@@ -21,7 +30,6 @@ div.canvas {
 	right: 0;
 	top: 0;
 	bottom: 0;
-  
 }
 
 div.canvas .info {
@@ -41,10 +49,11 @@ div.canvas .info.error {
 
 div.dashboard {
 	position: absolute;
-	width: 100px;
+	width: 230px;
 	right: 30px;
 	top: 30px;
   padding: 10px;
+  font-family: 'Yanone Kaffeesatz', "Helvetica Neue", Helvetica,Arial, sans-serif;
 }
 
 div.dashboard.light {
@@ -60,4 +69,18 @@ div.canvas canvas {
 
 div.canvas canvas.error { 
   display: none;
+}
+
+div.dashboard .input-label {
+  display: inline-block;
+  text-align: right;
+  width: 50px;
+}
+
+div.dashboard.light input {
+  margin: 5px;
+  padding: 2px;
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;  
 }

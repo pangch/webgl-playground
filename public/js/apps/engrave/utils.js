@@ -4,11 +4,11 @@ define(function() {
     drawAxis: function(gl, shader) {
       var vertices = [
           0.0,   0.0,   0.0,
-        100.0,   0.0,   0.0,
+        500.0,   0.0,   0.0,
           0.0,   0.0,   0.0,
-          0.0, 100.0,   0.0,
+          0.0, 500.0,   0.0,
           0.0,   0.0,   0.0,
-          0.0,   0.0, 100.0
+          0.0,   0.0, 500.0
       ];
     
       var verticesBuffer = gl.createBuffer();

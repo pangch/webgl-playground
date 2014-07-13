@@ -1,4 +1,4 @@
-define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], function(shader, models, camera, utils, math, glm) {
+define(['./shader', './models', './camera', './assets', './utils', './math', 'gl-matrix'], function(shader, models, camera, assets, utils, math, glm) {
   
   var gl;
   var params;
@@ -18,17 +18,65 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
   
   var baseSolid;
   var solid;
-
+  
+  var currentText, currentDepth, currentConvex;
+  
   var initScene = function() {    
-    var solidA = models.Text.char('p', 1.0).translate([-2.5, -2.5, 0.0]);
-    var solidB = models.Text.string('aiueo test', 1.0).translate([3.0, -2.5, 0.0]);
-    solid = solidA.union(solidB);
-    solid.color = [1.0, 0.5, 0.5, 1.0];    
-    solid.buildBuffers(gl);
+    // Build base solid
+    var basePolygon = models.Polygon.fromVertices(assets.base);
+    baseSolid = models.Primitives.prism(basePolygon, 10.0);  
   };
   
   var updateScene = function() {
+    var text = params.getText();
+    text = text.replace(/^\s+|\s+$/g, '');
     
+    var depth = params.getDepth();    
+    var isConvex = params.isConvex();
+    if (text === currentText && currentDepth === depth && currentConvex === isConvex && solid) {
+      return;
+    }
+    
+    var textSolids = null;
+    
+    if (text.length) {
+      textSolids = models.Text.string(text, 1.0);
+    }
+    
+    if (textSolids) {
+      var width = textSolids.width;
+      textSolids = textSolids.map(function(solid) { return solid.translate([-width / 2, -2.5, 0.5]); });
+      var scaleXY = 1;
+      if (width < 50.0) {
+        scaleXY = 50.0 / width;
+        if (scaleXY > 3.0) {
+          scaleXY = 3.0;
+        }
+      } else if (width > 60.0) {
+        scaleXY = 60.0 / width;
+      }
+      textSolids = textSolids.map(function(solid) { return solid.scale([scaleXY, scaleXY, depth]); });
+      solid = baseSolid;
+      if (isConvex) {
+        textSolids = textSolids.map(function(solid) { return solid.translate([0, 0, depth / 2.0 - 0.001]) });
+        for (var i = 0; i < textSolids.length; i++) {
+          solid = solid.union(textSolids[i]);
+        }
+      } else {
+        textSolids = textSolids.map(function(solid) { return solid.translate([0, 0, - depth / 2.0 + 0.001]) });
+        for (var i = 0; i < textSolids.length; i++) {
+          solid = solid.subtract(textSolids[i]);
+        }
+      }
+    } else {
+      solid = baseSolid;      
+    }    
+    solid.color = [1.0, .9, .8, 1.0];
+    solid.buildBuffers(gl);
+    
+    currentText = text;
+    currentDepth = depth;
+    currentConvex = isConvex;
   }
   
   var drawScene = function() {
@@ -42,7 +90,9 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     gl.viewport(0, 0, width, height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 100.0);
+    glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 500.0);
+    glm.mat4.rotate(pMatrix, pMatrix, -.2, [1, -1, -1]);
+    glm.mat4.translate(pMatrix, pMatrix, [10, 10, -80.0]);
     
     glm.mat4.identity(mvMatrix);
     
@@ -52,13 +102,12 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
     glm.mat4.rotate(mvMatrix, mvMatrix, camera.getYRot(), [1, 0, 0]);
     
     setMatrixUniforms();
-    utils.drawAxis(gl, shader);
     
     gl.uniform1i(shader.useLightingUniform, true);
-    gl.uniform3f(shader.ambientColorUniform, 0.2, 0.2, 0.2);
+    gl.uniform3f(shader.ambientColorUniform, 0.4, 0.4, 0.4);
 
-    gl.uniform3f(shader.pointLightingPositionUniform, 2.5, 0.0, 0.0);
-    gl.uniform3f(shader.pointLightingColorUniform, 0.8, 0.8, 0.8);
+    gl.uniform3f(shader.pointLightingPositionUniform, 20.0, 0.0, 35.0);
+    gl.uniform3f(shader.pointLightingColorUniform, 0.6, 0.6, 0.6);
     
     solid.draw(gl, shader);
   };
@@ -79,7 +128,7 @@ define(['./shader', './models', './camera', './utils', './math', 'gl-matrix'], f
       initScene();
       shader.init(gl);
       
-      gl.clearColor(.8, .8, .8, 1.0);
+      gl.clearColor(.3, .3, .3, 1.0);
       gl.enable(gl.DEPTH_TEST);
     },
 

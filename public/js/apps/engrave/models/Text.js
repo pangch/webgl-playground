@@ -89,7 +89,7 @@ define(['./Polygon', './Primitives', '../assets', 'gl-matrix'], function(Polygon
       }
       
       var width = 0;
-      var strSolid = null;
+      var strSolids = [];
       
       for (var i = 0; i < str.length; i++) {
         var char = str[i];
@@ -100,7 +100,7 @@ define(['./Polygon', './Primitives', '../assets', 'gl-matrix'], function(Polygon
         
         var charSolid = this.char(char, depth);
         if (charSolid) {
-          if (strSolid) {
+          if (strSolids.length) {
             width += spacing;
           }
           
@@ -108,15 +108,14 @@ define(['./Polygon', './Primitives', '../assets', 'gl-matrix'], function(Polygon
           charSolid = charSolid.translate([width, 0.0, 0.0]);
           width += charWidth;
           
-          strSolid = strSolid ? strSolid.union(charSolid) : charSolid;          
+          strSolids.push(charSolid);
         }
       }
       
-      if (strSolid) {
-        strSolid.width = width;
+      if (strSolids) {
+        strSolids.width = width;
       }
-      
-      return strSolid;
+      return strSolids;
     }
   }
 });

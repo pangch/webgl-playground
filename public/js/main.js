@@ -101,6 +101,7 @@ requirejs(['jquery', 'spin'], function($, Spinner) {
     var dashboard = $('div.dashboard');
     dashboard.removeClass('active');
     dashboard.removeClass('dark light');
+    dashboard.html('');
   };
   
   // Let the active app handle key event first, and then run generic handler
