@@ -1,8 +1,13 @@
-define([], function() {
+define(['gl-matrix'], function(glm) {
   
+  var gridSize;
   var objectMap;
   
-  var initStaticObjectMap = function(gl, gridSize, radius) {
+  var boundaryObject;
+  var objectMapFrameBuffer;
+  var frameBufferDrawn = false;
+  
+  var initStaticObjectMap = function(gl, radius) {
     // First pos is the origin. Used for static objects in the scene.
     var pos = [0.0, 0.0, 0.0];
     
@@ -13,12 +18,6 @@ define([], function() {
       var y = radius * Math.sin(theta);
       pos.push(x, y, 0.0);
     }
-
-    // for (var i = 0; i < gridSize; i++) {
-    //   for (var j = 0; j < gridSize; j++) {
-    //     pos.push(i * 2.0, j * 2.0, 0.0);
-    //   }
-    // }
     
     var data = new Float32Array(pos);
     var texture = gl.createTexture();
@@ -27,24 +26,20 @@ define([], function() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     objectMap = texture;
+    
+    frameBufferDrawn = true;
   }
   
-  var objectMapFrameBuffer;
-  var frameBufferDrawn = false;
-  
-  var initObjectMapFrameBuffer = function(gl, count) {
+  var initObjectMapFrameBuffer = function(gl) {
     // Create framebuffer and bind texture object
     objectMapFrameBuffer = gl.createFramebuffer();    
     gl.bindFramebuffer(gl.FRAMEBUFFER, objectMapFrameBuffer);
     
-    objectMapFrameBuffer.width = count + 1;
-    objectMapFrameBuffer.height = 1;
-        
     objectMap = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, objectMap);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, objectMapFrameBuffer.width, objectMapFrameBuffer.height, 0, gl.RGBA, gl.FLOAT, null);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gridSize, gridSize, 0, gl.RGBA, gl.FLOAT, null);
     
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, objectMap, 0);
 
@@ -53,44 +48,56 @@ define([], function() {
     
     objectMapFrameBuffer.texture = objectMap;
     
-    // Create vertex buffer
-    var vertices = [0.0, 0.5, 0.0, count + 1, 0.5, 0.0];
+    // Create boundary object buffers
+    boundaryObject = {};
+    var vertices = [0.0, 0.0, 0.0, gridSize, 0.0, 0.0, gridSize, gridSize, 0.0, 0.0, gridSize, 0.0];
     var buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    objectMapFrameBuffer.vertices = buffer;
+    boundaryObject.vertices = buffer;
     
-    objectMapFrameBuffer.objectGridSize = count;    
+    var indices = [0, 1, 2, 0, 2, 3];
+    var indicesBuffer = gl.createBuffer();
+    
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    
+    boundaryObject.indices = indicesBuffer;
+    boundaryObject.indexCount = indices.length;
   }
   
   return {
-    init: function(gl, gridSize) {
-      initStaticObjectMap(gl, gridSize, 10.0);
+    init: function(gl, _gridSize) {
+      gridSize = _gridSize;
+      
+      // initStaticObjectMap(gl, 10.0);
+      initObjectMapFrameBuffer(gl);
     },
     
     iterate: function(gl, shader) {
-      // if (!frameBufferDrawn) {
-      //   gl.useProgram(shader.physicsProgram);
-      //   gl.bindFramebuffer(gl.FRAMEBUFFER, objectMapFrameBuffer);
-      //
-      //   gl.viewport(0, 0, objectMapFrameBuffer.width, objectMapFrameBuffer.height);
-      //
-      //   gl.bindBuffer(gl.ARRAY_BUFFER, objectMapFrameBuffer.vertices);
-      //   gl.vertexAttribPointer(shader.physicsVertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-      //
-      //   gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
-      //   gl.vertexAttribPointer(2, 3, gl.FLOAT, false, 0, 0);
-      //   gl.vertexAttribPointer(3, 3, gl.FLOAT, false, 0, 0);
-      //
-      //   gl.uniform1i(shader.physicsObjectGridSizeUniform, objectMapFrameBuffer.objectGridSize);
-      //
-      //   gl.lineWidth(1.0);
-      //   gl.drawArrays(gl.LINES, 0, 2);
-      //
-      //   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      // }
-      //
-      // frameBufferDrawn = true;
+      if (!frameBufferDrawn) {
+        gl.useProgram(shader.physicsProgram);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, objectMapFrameBuffer);
+
+        gl.viewport(0, 0, gridSize, gridSize);
+        
+        var mvpMatrix = glm.mat4.ortho(glm.mat4.create(), 0, gridSize, 0, gridSize, 0.5, -0.5);
+        gl.uniformMatrix4fv(shader.mvpMatrixUniform, false, mvpMatrix);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, boundaryObject.vertices);
+        gl.vertexAttribPointer(shader.physicsVertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
+        gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(2, 3, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(3, 3, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boundaryObject.indices);
+        gl.drawElements(gl.TRIANGLES, boundaryObject.indexCount, gl.UNSIGNED_SHORT, 0);
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      }
+
+      frameBufferDrawn = true;
     },
     
     getObjectMap: function() {

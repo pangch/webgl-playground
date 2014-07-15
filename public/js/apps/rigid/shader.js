@@ -41,7 +41,7 @@ define(['./utils',
       this.physicsVertexPositionAttribute = gl.getAttribLocation(physicsProgram, "aVertexPosition");
 	    gl.enableVertexAttribArray(this.physicsVertexPositionAttribute);
       
-      this.physicsObjectGridSizeUniform = gl.getUniformLocation(physicsProgram, "uObjectGridSize");
+      this.mvpMatrixUniform = gl.getUniformLocation(physicsProgram, "uMVPMatrix");
       
       // Build main shader
 			var program = gl.createProgram();
@@ -68,8 +68,6 @@ define(['./utils',
       
       this.objectIndexAttribute = gl.getAttribLocation(program, "aObjectIndex");
 	    gl.enableVertexAttribArray(this.objectIndexAttribute);
-      
-      this.objectGridSizeUniform = gl.getUniformLocation(program, "uObjectGridSize");
       
       this.objectMapUniform = gl.getUniformLocation(program, "uObjectMap");
       

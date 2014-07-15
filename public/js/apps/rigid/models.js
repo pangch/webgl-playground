@@ -225,6 +225,8 @@ define(['./assets'], function(assets) {
         var x = (index % gridSize) / gridSize, y = Math.floor(index / gridSize) / gridSize;
         if (i == 0) {
           color = [1.0, 1.0, 1.0, 1.0];
+        } else if (i == gridSize * gridSize - 1) {
+          color = [0.2, 0.2, 0.2];
         }
         indexBase = addSphere(gl, objects, color , indexBase, x, y);
       }
