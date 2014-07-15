@@ -5,10 +5,30 @@
   src: local('Yanone Kaffeesatz Regular'), local('YanoneKaffeesatz-Regular'), url(../fonts/YanoneKaffeesatz.woff) format('woff');
 }
 
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Raleway'), url(../fonts/Raleway.woff) format('woff');
+}
+
 body {
 	margin: 0;
   font-family: "Helvetica Neue", Helvetica,Arial, sans-serif;
-  -webkit-font-smoothing: antialiased !important;  
+  -webkit-font-smoothing: antialiased !important;
+  background: #EEE;
+}
+
+div.header {
+  font-family: "Raleway", "Helvetica Neue", Helvetica,Arial, sans-serif;
+  background: #7BE;
+  color: #fff;
+}
+
+div.header h1 {
+  padding: 180px 60px 40px 60px;
+  margin: 0;
+  font-size: 40pt;
 }
 
 div.canvas, div.dashboard {

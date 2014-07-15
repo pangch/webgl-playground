@@ -133,8 +133,7 @@ define(['./BSPTree', 'gl-matrix'], function(BSPTree, glm) {
       }
     },
     
-    draw: function(gl, shader, lines) {
-      
+    draw: function(gl, shader, lines) {      
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.normals);
       gl.vertexAttribPointer(shader.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
     
