@@ -218,15 +218,15 @@ define(['./assets'], function(assets) {
       
       initSphere(10, 1.0);
       var indexBase = 0;      
-      for (var i = 0; i < gridSize * gridSize - 1; i++) {
+      for (var i = 0; i < gridSize * gridSize; i++) {
         // indexBase = addCube(gl, objects, colors[i % colors.length], indexBase, i);
         var color = colors[i % colors.length];
-        var index = i + 1;
+        var index = i;
         var x = (index % gridSize) / gridSize, y = Math.floor(index / gridSize) / gridSize;
         if (i == 0) {
           color = [1.0, 1.0, 1.0, 1.0];
         } else if (i == gridSize * gridSize - 1) {
-          color = [0.2, 0.2, 0.2];
+          color = [0.2, 0.2, 0.2, 1.0];
         }
         indexBase = addSphere(gl, objects, color , indexBase, x, y);
       }

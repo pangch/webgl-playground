@@ -41,7 +41,7 @@ define(['./utils',
       this.physicsVertexPositionAttribute = gl.getAttribLocation(physicsProgram, "aVertexPosition");
 	    gl.enableVertexAttribArray(this.physicsVertexPositionAttribute);
       
-      this.mvpMatrixUniform = gl.getUniformLocation(physicsProgram, "uMVPMatrix");
+      this.physicsGridSizeUniform = gl.getUniformLocation(physicsProgram, "uGridSize");
       
       // Build main shader
 			var program = gl.createProgram();
@@ -74,6 +74,8 @@ define(['./utils',
 	    this.pMatrixUniform = gl.getUniformLocation(program, "uPMatrix");
 	    this.mvMatrixUniform = gl.getUniformLocation(program, "uMVMatrix");
       this.nMatrixUniform = gl.getUniformLocation(program, "uNMatrix");
+      
+      this.drawingObjectsUniform = gl.getUniformLocation(program, "uDrawingObjects");
       
       this.ambientColorUniform = gl.getUniformLocation(program, "uAmbientColor");      
       this.pointLightingColorUniform = gl.getUniformLocation(program, "uPointLightingColor");

@@ -67,6 +67,11 @@ define([
     gl.uniform1i(shader.objectMapUniform, 0);
     gl.uniform1i(shader.objectGridSizeUniform, objectGridSize);
     
+    gl.uniform1i(shader.drawingObjectsUniform, false);    
+    utils.drawAxis(gl, shader);
+    
+    gl.uniform1i(shader.drawingObjectsUniform, true);
+    
     // Draw all objects
     models.draw(gl, shader);
   };

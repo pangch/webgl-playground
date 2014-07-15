@@ -4,6 +4,8 @@ attribute vec4 aVertexColor;
 
 attribute vec2 aObjectIndex;
 
+uniform bool uDrawingObjects;
+
 uniform sampler2D uObjectMap;
 
 uniform mat4 uMVMatrix;
@@ -16,8 +18,8 @@ varying vec4 vPosition;
 
 void main(void) {
   vNormal = uNMatrix * aVertexNormal;
-  vec4 objectPos = texture2D(uObjectMap, aObjectIndex);
-  vPosition = uMVMatrix * vec4(aVertexPosition + objectPos.xyz, 1.0);
+  vec3 objectPos = uDrawingObjects ? texture2D(uObjectMap, aObjectIndex).xyz : vec3(0.0);
+  vPosition = uMVMatrix * vec4(aVertexPosition + objectPos, 1.0);
   gl_Position = uPMatrix * vPosition;
   
   vColor = aVertexColor;

@@ -50,7 +50,7 @@ define(function() {
       gl.vertexAttribPointer(shader.vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
       
       gl.disableVertexAttribArray(shader.objectIndexAttribute);
-      gl.vertexAttrib1f(shader.objectIndexAttribute, 0.0);
+      gl.vertexAttrib2f(shader.objectIndexAttribute, 0.0, 0.0);
             
       gl.lineWidth(1.0);
       gl.drawArrays(gl.LINES, 0, 6);
