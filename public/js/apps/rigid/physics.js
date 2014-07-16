@@ -50,7 +50,7 @@ define(['gl-matrix'], function(glm) {
 
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        pos.push(0, 0, (Math.random() + 1.0) * 4.0);
+        pos.push((Math.random() - 0.5) * 2.0, (Math.random() - 0.5) * 2.0, (Math.random() + 1.0) * 4.0);
       }      
     }
     
@@ -214,7 +214,15 @@ define(['gl-matrix'], function(glm) {
     }
     gl.uniform1i(shader.objectPositionProgram.objectVelocityMapUniform, 1);
     
+    // Bind space grid
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, spaceGridFrameBuffer.texture);
+    gl.uniform1i(shader.objectPositionProgram.spaceGridUniform, 2);    
+    
     gl.uniform1i(shader.objectPositionProgram.objectMapSizeUniform, objectMapSize);
+    
+    gl.uniform1i(shader.objectPositionProgram.spaceGridBlockSizeUniform, spaceGridTextureSize / spaceGridSize);
+    gl.uniform1f(shader.objectPositionProgram.spaceGridTextureSizeInverseUniform, 1.0 / spaceGridTextureSize);
     
     gl.enableVertexAttribArray(shader.objectPositionProgram.vertexPositionAttribute);
     drawFillRectangle(gl, shader.objectPositionProgram.vertexPositionAttribute);

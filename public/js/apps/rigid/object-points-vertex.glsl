@@ -6,7 +6,7 @@ uniform sampler2D uObjectPositionMap;
 
 varying vec2 vIndex;
 
-vec2 toTextureCoord(vec3 pos) {
+vec2 toTexCoord(vec3 pos) {
   // Maps the 3D position to 2D texture coordination  
   int z = int(pos.z);
   int dy = z / uSpaceGridBlockSize;
@@ -15,7 +15,7 @@ vec2 toTextureCoord(vec3 pos) {
 }
 
 void main(void) {
-  vec2 pos = toTextureCoord(texture2D(uObjectPositionMap, aVertexPosition).xyz);
+  vec2 pos = toTexCoord(texture2D(uObjectPositionMap, aVertexPosition).xyz);
   
   // Maps the position from range (0..1, 0..1) to range (-1..1, -1..1)
   pos = pos * 2.0 - 1.0;
