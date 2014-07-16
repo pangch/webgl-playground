@@ -50,7 +50,13 @@ define(['gl-matrix'], function(glm) {
 
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        pos.push((Math.random() - 0.5) * 2.0, (Math.random() - 0.5) * 2.0, (Math.random() + 1.0) * 4.0);
+        // pos.push((Math.random() - 0.5) * 2.0, (Math.random() - 0.5) * 2.0, (Math.random() + 1.0) * 1.0);
+        // pos.push(0.0, 0.0, (Math.random() + 1.0) * 4.0);
+        var dx = (i + j) % 2 == 0 ? 0.5 : -0.5;
+        if (j == 1) {
+          dx = -dx;
+        }
+        pos.push(dx, 0.0, 1.5);
       }      
     }
     
@@ -175,9 +181,16 @@ define(['gl-matrix'], function(glm) {
     } else {
       gl.bindTexture(gl.TEXTURE_2D, objectVelocityMapFrameBuffer1.texture);
     }
-    gl.uniform1i(shader.objectVelocityProgram.objectVelocityMapUniform, 1);
+    gl.uniform1i(shader.objectVelocityProgram.objectVelocityMapUniform, 1);    
     
-    gl.uniform1i(shader.objectVelocityProgram.objectMapSizeUniform, objectMapSize);
+    // Bind space grid
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, spaceGridFrameBuffer.texture);
+    gl.uniform1i(shader.objectVelocityProgram.spaceGridUniform, 2);    
+        
+    gl.uniform1i(shader.objectVelocityProgram.spaceGridSizeUniform, spaceGridSize);
+    gl.uniform1i(shader.objectVelocityProgram.spaceGridBlockSizeUniform, spaceGridTextureSize / spaceGridSize);
+    gl.uniform1f(shader.objectVelocityProgram.spaceGridTextureSizeInverseUniform, 1.0 / spaceGridTextureSize);
     
     gl.enableVertexAttribArray(shader.objectVelocityProgram.vertexPositionAttribute);
     drawFillRectangle(gl, shader.objectVelocityProgram.vertexPositionAttribute);
@@ -213,16 +226,8 @@ define(['gl-matrix'], function(glm) {
       gl.bindTexture(gl.TEXTURE_2D, objectVelocityMapFrameBuffer1.texture);
     }
     gl.uniform1i(shader.objectPositionProgram.objectVelocityMapUniform, 1);
-    
-    // Bind space grid
-    gl.activeTexture(gl.TEXTURE2);
-    gl.bindTexture(gl.TEXTURE_2D, spaceGridFrameBuffer.texture);
-    gl.uniform1i(shader.objectPositionProgram.spaceGridUniform, 2);    
-    
+        
     gl.uniform1i(shader.objectPositionProgram.objectMapSizeUniform, objectMapSize);
-    
-    gl.uniform1i(shader.objectPositionProgram.spaceGridBlockSizeUniform, spaceGridTextureSize / spaceGridSize);
-    gl.uniform1f(shader.objectPositionProgram.spaceGridTextureSizeInverseUniform, 1.0 / spaceGridTextureSize);
     
     gl.enableVertexAttribArray(shader.objectPositionProgram.vertexPositionAttribute);
     drawFillRectangle(gl, shader.objectPositionProgram.vertexPositionAttribute);

@@ -21,7 +21,7 @@ define([
   var pMatrix = glm.mat4.create();   // Projection matrix
   var mvMatrix = glm.mat4.create();  // Modelview matrix
   
-  var objectMapSize = 16;
+  var objectMapSize = 2;
   
   var setMatrixUniforms = function() {
     gl.uniformMatrix4fv(shader.pMatrixUniform, false, pMatrix);

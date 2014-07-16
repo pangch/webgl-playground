@@ -64,6 +64,7 @@ define(['./utils',
 	    }
 
       objectVelocityProgram.vertexPositionAttribute = gl.getAttribLocation(objectVelocityProgram, "aVertexPosition");
+      objectVelocityProgram.spaceGridSizeUniform = gl.getUniformLocation(objectVelocityProgram, "uSpaceGridSize");
       objectVelocityProgram.spaceGridBlockSizeUniform = gl.getUniformLocation(objectVelocityProgram, "uSpaceGridBlockSize");
       objectVelocityProgram.spaceGridTextureSizeInverseUniform = gl.getUniformLocation(objectVelocityProgram, "uSpaceGridTextureSizeInverse");
       objectVelocityProgram.spaceGridUniform = gl.getUniformLocation(objectVelocityProgram, "uSpaceGrid");
