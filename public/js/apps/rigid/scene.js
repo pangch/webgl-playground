@@ -125,6 +125,13 @@ define([
     
     exit: function() {
       cancelRequestAnimFrame(animFramRequest);
+    },
+    
+    handleKeyEvent: function(evt) {
+      if (evt.type === 'keydown' && evt.keyCode === 82) {
+        physics.reset();
+      }
+      return true;
     }
   };
 });

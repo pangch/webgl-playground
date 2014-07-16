@@ -278,6 +278,10 @@ define(['gl-matrix'], function(glm) {
     
     getObjectPositionMap: function() {
       return objectPositionMapFrameBuffer.texture;
+    },
+    
+    reset: function() {
+      useInitialObjectMaps = true;
     }
   }
 });
