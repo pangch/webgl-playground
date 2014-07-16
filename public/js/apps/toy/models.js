@@ -24,6 +24,13 @@ define(['./assets'], function(assets) {
       squareVertexPositionBuffer.itemSize = 3;
       squareVertexPositionBuffer.numItems = 4;
       this.squareVertexPosition = squareVertexPositionBuffer;
+      
+      var pointsPositionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, pointsPositionBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(assets.pointVertices), gl.STATIC_DRAW);
+      pointsPositionBuffer.itemSize = 3;
+      pointsPositionBuffer.numItems = assets.pointVertices.length / 3;
+      this.pointsPosition = pointsPositionBuffer;
     }
   };
 });

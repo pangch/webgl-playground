@@ -1,6 +1,8 @@
 define(['./assets'], function(assets) {
   
-  var addCube = function(gl, objects, color, indexBase, objectIndex) {  
+  var sphereRadius = 2.5;
+  
+  var addCube = function(objects, color, indexBase, objectIndex) {  
     var addFace = function(vertices, normals) {
       Array.prototype.push.apply(objects.vertices, vertices);
       Array.prototype.push.apply(objects.normals, normals);
@@ -139,7 +141,7 @@ define(['./assets'], function(assets) {
     }
   };
   
-  var addSphere = function(gl, objects, color, indexBase, objectIndexX, objectIndexY) {
+  var addSphere = function(objects, color, indexBase, objectIndexX, objectIndexY) {
     Array.prototype.push.apply(objects.vertices, sphere.vertices);
     Array.prototype.push.apply(objects.normals, sphere.normals);
     Array.prototype.push.apply(objects.indices, sphere.indices.map(function(index) { return indexBase + index }));
@@ -154,6 +156,42 @@ define(['./assets'], function(assets) {
     return indexBase;
   };
   
+  var createObjects = function(objectMapSize) {
+    var objects = {};
+    objects.vertices = [];
+    objects.normals = [];
+    objects.colors = [];
+    objects.indices = [];
+    objects.objectIndices = [];
+    
+    var colors = [
+      [1.0, 0.1, 0.1, 1.0],
+      [0.1, 1.0, 0.1, 1.0],
+      [0.1, 0.1, 1.0, 1.0],
+      [0.1, 1.0, 1.0, 1.0],
+      [1.0, 0.1, 1.0, 1.0],
+      [1.0, 1.0, 0.1, 1.0],
+      [0.4, 0.9, 0.6, 1.0],
+      [0.6, 0.4, 0.9, 1.0],
+      [0.9, 0.6, 0.4, 1.0],
+      [0.3, 0.5, 1.0, 1.0],
+      [0.5, 1.0, 0.3, 1.0],
+      [1.0, 0.3, 0.5, 1.0]
+    ];
+    
+    initSphere(10, sphereRadius);
+    var indexBase = 0;      
+    for (var i = 0; i < objectMapSize; i++) {
+      for (var j = 0; j < objectMapSize; j++) {
+        // indexBase = addCube(gl, objects, colors[i % colors.length], indexBase, i);
+        var color = colors[(i + j) % colors.length];
+        indexBase = addSphere(objects, color , indexBase, i / objectMapSize, j / objectMapSize);
+      }      
+    }
+    
+    return objects;    
+  };
+  
   // Create an object of GL array buffers from a model
   var buildObjects = function(gl, objects) {
     var obj = {};
@@ -164,10 +202,10 @@ define(['./assets'], function(assets) {
     obj.vertexCount = objects.vertices.length / 3;
     
     if (objects.normals) {
-      var normalsBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, normalsBuffer);
+      var axisNormalsBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, axisNormalsBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(objects.normals), gl.STATIC_DRAW);
-      obj.normals = normalsBuffer;
+      obj.normals = axisNormalsBuffer;
     }
     
     if (objects.colors) {
@@ -195,44 +233,56 @@ define(['./assets'], function(assets) {
     return obj;      
   }
   
+  var axisVerticesBuffer, axisNormalsBuffer, axisColorsBuffer;
+  
+  var initAxis = function(gl) {
+    var vertices = [
+        0.0,   0.0,   0.0,
+      500.0,   0.0,   0.0,
+        0.0,   0.0,   0.0,
+        0.0, 500.0,   0.0,
+        0.0,   0.0,   0.0,
+        0.0,   0.0, 500.0
+    ];
+  
+    axisVerticesBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, axisVerticesBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  
+    var normals = [
+      0.0, 0.0, 1.0,
+      0.0, 0.0, 1.0,
+      0.0, 1.0, 0.0,
+      0.0, 1.0, 0.0,
+      1.0, 0.0, 0.0,
+      1.0, 0.0, 0.0
+    ];
+  
+    axisNormalsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, axisNormalsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        
+    var colors = [
+      1.0, 0.0, 0.0, 1.0,
+      1.0, 0.0, 0.0, 1.0,
+      0.0, 1.0, 0.0, 1.0,
+      0.0, 1.0, 0.0, 1.0,
+      0.0, 0.0, 1.0, 1.0,
+      0.0, 0.0, 1.0, 1.0
+    ];
+  
+    axisColorsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, axisColorsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);    
+  };
+  
   return {
-    init: function(gl, gridSize) {
-      var objects = {};
-      objects.vertices = [];
-      objects.normals = [];
-      objects.colors = [];
-      objects.indices = [];
-      objects.objectIndices = [];
-      
-      var colors = [
-        [1.0, 0.0, 0.0, 1.0],
-        [0.0, 1.0, 0.0, 1.0],
-        [0.0, 0.0, 1.0, 1.0],
-        [0.0, 1.0, 1.0, 1.0],
-        [1.0, 0.0, 1.0, 1.0],
-        [1.0, 1.0, 0.0, 1.0],
-        [0.4, 0.8, 0.6, 1.0],
-        [0.6, 0.4, 0.8, 1.0],
-        [0.8, 0.6, 0.4, 1.0]
-      ];
-      
-      initSphere(10, 1.0);
-      var indexBase = 0;      
-      for (var i = 0; i < gridSize * gridSize; i++) {
-        // indexBase = addCube(gl, objects, colors[i % colors.length], indexBase, i);
-        var color = colors[i % colors.length];
-        var index = i;
-        var x = (index % gridSize) / gridSize, y = Math.floor(index / gridSize) / gridSize;
-        if (i == 0) {
-          color = [1.0, 1.0, 1.0, 1.0];
-        } else if (i == gridSize * gridSize - 1) {
-          color = [0.2, 0.2, 0.2, 1.0];
-        }
-        indexBase = addSphere(gl, objects, color , indexBase, x, y);
-      }
-
+    init: function(gl, objectPositionProgram) {
+      var objects = createObjects(objectPositionProgram);
       this.objects = buildObjects(gl, objects);
-      this.objects.objectGridSize = gridSize;
+      this.objects.objectMapSize = objectPositionProgram;
+      
+      initAxis(gl);
     },
     
     draw: function(gl, shader) {
@@ -252,6 +302,25 @@ define(['./assets'], function(assets) {
     
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, objects.indices);
       gl.drawElements(gl.TRIANGLES, objects.indexCount, gl.UNSIGNED_SHORT, 0);
+    },
+    
+    drawAxis: function(gl, shader) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, axisVerticesBuffer);
+      gl.vertexAttribPointer(shader.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+      
+      gl.bindBuffer(gl.ARRAY_BUFFER, axisNormalsBuffer);
+      gl.vertexAttribPointer(shader.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+      
+      gl.bindBuffer(gl.ARRAY_BUFFER, axisColorsBuffer);
+      gl.vertexAttribPointer(shader.vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
+      
+      gl.disableVertexAttribArray(shader.objectIndexAttribute);
+      gl.vertexAttrib2f(shader.objectIndexAttribute, 0.0, 0.0);
+            
+      gl.lineWidth(1.0);
+      gl.drawArrays(gl.LINES, 0, 6);
+      
+      gl.enableVertexAttribArray(shader.objectIndexAttribute);
     }
   };
 });

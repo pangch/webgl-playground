@@ -1,14 +1,20 @@
 define(['./utils', 
         'text!./vertex.glsl', 
         'text!./fragment.glsl',
-        'text!./physics-vertex.glsl',
-        'text!./physics-fragment.glsl'
+        'text!./fill-rectangle-vertex.glsl',
+        'text!./object-points-vertex.glsl',
+        'text!./space-grid-fragment.glsl',        
+        'text!./object-position-fragment.glsl',
+        'text!./object-velocity-fragment.glsl'
         ], function(
         utils, 
         vertexShader, 
         fragmentShader,
-        physicsVertexShader,
-        physicsFragmentShader) {
+        fillRectangleVertexShader,
+        objectPointsVertexShader,
+        spaceGridFragmentShader,
+        objectPositionFragmentShader,
+        objectVelocityFragmentShader) {
   
   // Create a shader from source
 	var buildShader = function(gl, source, type) {
@@ -25,25 +31,64 @@ define(['./utils',
 
 	return {
 		init: function(gl) {
-      // Build physics shaders
-      var physicsProgram = gl.createProgram();
+      //
+      // Build simulation shaders
+      //
       
-	    gl.attachShader(physicsProgram, buildShader(gl, physicsVertexShader, gl.VERTEX_SHADER));
-	    gl.attachShader(physicsProgram, buildShader(gl, physicsFragmentShader, gl.FRAGMENT_SHADER));
-	    gl.linkProgram(physicsProgram);
+      // Space grid generation
+      var spaceGridProgram = gl.createProgram();
+      
+	    gl.attachShader(spaceGridProgram, buildShader(gl, objectPointsVertexShader, gl.VERTEX_SHADER));
+	    gl.attachShader(spaceGridProgram, buildShader(gl, spaceGridFragmentShader, gl.FRAGMENT_SHADER));
+	    gl.linkProgram(spaceGridProgram);
 
-	    if (!gl.getProgramParameter(physicsProgram, gl.LINK_STATUS)) {
+	    if (!gl.getProgramParameter(spaceGridProgram, gl.LINK_STATUS)) {
 	      throw new Error("Failed to initialise shaders");
 	    }
 
-	    this.physicsProgram = physicsProgram;
-            
-      this.physicsVertexPositionAttribute = gl.getAttribLocation(physicsProgram, "aVertexPosition");
-	    gl.enableVertexAttribArray(this.physicsVertexPositionAttribute);
+      spaceGridProgram.vertexPositionAttribute = gl.getAttribLocation(spaceGridProgram, "aVertexPosition");
+      spaceGridProgram.spaceGridBlockSizeUniform = gl.getUniformLocation(spaceGridProgram, "uSpaceGridBlockSize");
+      spaceGridProgram.spaceGridTextureSizeInverseUniform = gl.getUniformLocation(spaceGridProgram, "uSpaceGridTextureSizeInverse");
+      spaceGridProgram.objectPositionMapUniform = gl.getUniformLocation(spaceGridProgram, "uObjectPositionMap");
+	    this.spaceGridProgram = spaceGridProgram;
       
-      this.physicsGridSizeUniform = gl.getUniformLocation(physicsProgram, "uGridSize");
+      // Object velocity output
+      var objectVelocityProgram = gl.createProgram();
       
+	    gl.attachShader(objectVelocityProgram, buildShader(gl, fillRectangleVertexShader, gl.VERTEX_SHADER));
+	    gl.attachShader(objectVelocityProgram, buildShader(gl, objectVelocityFragmentShader, gl.FRAGMENT_SHADER));
+	    gl.linkProgram(objectVelocityProgram);
+
+	    if (!gl.getProgramParameter(objectVelocityProgram, gl.LINK_STATUS)) {
+	      throw new Error("Failed to initialise shaders");
+	    }
+
+      objectVelocityProgram.vertexPositionAttribute = gl.getAttribLocation(objectVelocityProgram, "aVertexPosition");
+      objectVelocityProgram.objectMapSizeUniform = gl.getUniformLocation(objectVelocityProgram, "uObjectMapSize");
+      objectVelocityProgram.objectPositionMapUniform = gl.getUniformLocation(objectVelocityProgram, "uObjectPositionMap");
+      objectVelocityProgram.objectVelocityMapUniform = gl.getUniformLocation(objectVelocityProgram, "uObjectVelocityMap");
+	    this.objectVelocityProgram = objectVelocityProgram;
+      
+      // Object position output
+      var objectPositionProgram = gl.createProgram();
+      
+	    gl.attachShader(objectPositionProgram, buildShader(gl, fillRectangleVertexShader, gl.VERTEX_SHADER));
+	    gl.attachShader(objectPositionProgram, buildShader(gl, objectPositionFragmentShader, gl.FRAGMENT_SHADER));
+	    gl.linkProgram(objectPositionProgram);
+
+	    if (!gl.getProgramParameter(objectPositionProgram, gl.LINK_STATUS)) {
+	      throw new Error("Failed to initialise shaders");
+	    }
+
+      objectPositionProgram.vertexPositionAttribute = gl.getAttribLocation(objectPositionProgram, "aVertexPosition");
+      objectPositionProgram.objectMapSizeUniform = gl.getUniformLocation(objectPositionProgram, "uObjectMapSize");
+      objectPositionProgram.objectPositionMapUniform = gl.getUniformLocation(objectPositionProgram, "uObjectPositionMap");
+      objectPositionProgram.objectVelocityMapUniform = gl.getUniformLocation(objectPositionProgram, "uObjectVelocityMap");
+	    this.objectPositionProgram = objectPositionProgram;
+      
+      //
       // Build main shader
+      //
 			var program = gl.createProgram();
 	    
 	    gl.attachShader(program, buildShader(gl, vertexShader, gl.VERTEX_SHADER));
@@ -56,20 +101,12 @@ define(['./utils',
       
 	    this.program = program;
       
-	    // Stores shader parameters on this object
+      // Stores shader parameters on this object
 	    this.vertexPositionAttribute = gl.getAttribLocation(program, "aVertexPosition");
-	    gl.enableVertexAttribArray(this.vertexPositionAttribute);
-
       this.vertexColorAttribute = gl.getAttribLocation(program, "aVertexColor");
-      gl.enableVertexAttribArray(this.vertexColorAttribute);
-      
-	    this.vertexNormalAttribute = gl.getAttribLocation(program, "aVertexNormal");
-	    gl.enableVertexAttribArray(this.vertexNormalAttribute);
-      
-      this.objectIndexAttribute = gl.getAttribLocation(program, "aObjectIndex");
-	    gl.enableVertexAttribArray(this.objectIndexAttribute);
-      
-      this.objectMapUniform = gl.getUniformLocation(program, "uObjectMap");
+	    this.vertexNormalAttribute = gl.getAttribLocation(program, "aVertexNormal");      
+      this.objectIndexAttribute = gl.getAttribLocation(program, "aObjectIndex");      
+      this.objectPositionMapUniform = gl.getUniformLocation(program, "uObjectPositionMap");
       
 	    this.pMatrixUniform = gl.getUniformLocation(program, "uPMatrix");
 	    this.mvMatrixUniform = gl.getUniformLocation(program, "uMVMatrix");

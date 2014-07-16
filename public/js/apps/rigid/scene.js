@@ -21,7 +21,7 @@ define([
   var pMatrix = glm.mat4.create();   // Projection matrix
   var mvMatrix = glm.mat4.create();  // Modelview matrix
   
-  var objectGridSize = 4;
+  var objectMapSize = 16;
   
   var setMatrixUniforms = function() {
     gl.uniformMatrix4fv(shader.pMatrixUniform, false, pMatrix);
@@ -40,16 +40,22 @@ define([
     gl.useProgram(shader.program);
     
     gl.viewport(0, 0, width, height);
+    
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 1000.0);
+    glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 2000.0);
+        
+    glm.mat4.translate(pMatrix, pMatrix, [-100.0, -100.0, -400.0]);    
+    glm.mat4.rotate(pMatrix, pMatrix, -1.57, [0, 1, 0]);
+    glm.mat4.rotate(pMatrix, pMatrix, -1.57, [1, 0, 0]);    
     
     glm.mat4.identity(mvMatrix);
     
-    glm.mat4.translate(mvMatrix, mvMatrix, [-5.0, -1.0, -50.0]);
+    glm.mat4.translate(mvMatrix, mvMatrix, [-500, -100, 0]);
     
-    glm.mat4.rotate(mvMatrix, mvMatrix, camera.getXRot(), [0, 1, 0]);
-    glm.mat4.rotate(mvMatrix, mvMatrix, camera.getYRot(), [1, 0, 0]);    
+    glm.mat4.rotate(mvMatrix, mvMatrix, camera.getXRot(), [0, 0, 1]);
+    glm.mat4.rotate(mvMatrix, mvMatrix, camera.getYRot(), [0, 1, 0]);    
     
     setMatrixUniforms();
     
@@ -57,23 +63,33 @@ define([
     gl.uniform1i(shader.useLightingUniform, true);
     gl.uniform3f(shader.ambientColorUniform, 0.5, 0.5, 0.5);
     
-    gl.uniform3f(shader.pointLightingPositionUniform, 20.0, 0.0, 50.0);
+    gl.uniform3f(shader.pointLightingPositionUniform, 100.0, 250.0, 250.0);
     gl.uniform3f(shader.pointLightingColorUniform, 0.5, 0.5, 0.5);
     
     // Bind position map
-    var objectMap = physics.getObjectMap();
+    var objectPositionMap = physics.getObjectPositionMap();
     gl.activeTexture(gl.TEXTURE0);    
-    gl.bindTexture(gl.TEXTURE_2D, objectMap);
-    gl.uniform1i(shader.objectMapUniform, 0);
-    gl.uniform1i(shader.objectGridSizeUniform, objectGridSize);
+    gl.bindTexture(gl.TEXTURE_2D, objectPositionMap);
+    gl.uniform1i(shader.objectPositionMapUniform, 0);
+    gl.uniform1i(shader.objectMapSizeUniform, objectMapSize);
     
-    gl.uniform1i(shader.drawingObjectsUniform, false);    
-    utils.drawAxis(gl, shader);
+    gl.uniform1i(shader.drawingObjectsUniform, false);
     
+    gl.enableVertexAttribArray(shader.vertexPositionAttribute);
+    gl.enableVertexAttribArray(shader.vertexColorAttribute);  
+    gl.enableVertexAttribArray(shader.vertexNormalAttribute);    
+    gl.enableVertexAttribArray(shader.objectIndexAttribute);
+    
+    models.drawAxis(gl, shader);    
     gl.uniform1i(shader.drawingObjectsUniform, true);
     
     // Draw all objects
     models.draw(gl, shader);
+    
+    gl.disableVertexAttribArray(shader.vertexPositionAttribute);
+    gl.disableVertexAttribArray(shader.vertexColorAttribute);  
+    gl.disableVertexAttribArray(shader.vertexNormalAttribute);    
+    gl.disableVertexAttribArray(shader.objectIndexAttribute);
   };
   
   var animFramRequest;
@@ -92,12 +108,12 @@ define([
       
       var floatTextureExt = gl.getExtension('OES_texture_float');
       if (!floatTextureExt) {
-        throw new Error("WebGL OES_texture_float extension not supported.")
+        throw new Error("WebGL OES_texture_float extension not supported.");
       }
 
       shader.init(gl);
-      physics.init(gl, objectGridSize);
-      models.init(gl, objectGridSize);
+      physics.init(gl, objectMapSize);
+      models.init(gl, objectMapSize);
       
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
       gl.enable(gl.DEPTH_TEST);

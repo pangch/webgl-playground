@@ -31,9 +31,13 @@ define(['./shader', './models', './camera', 'gl-matrix'], function(shader, model
     
     gl.bindBuffer(gl.ARRAY_BUFFER, models.triangleVertexPosition);
     gl.vertexAttribPointer(shader.vertexPositionAttribute, models.triangleVertexPosition.itemSize, gl.FLOAT, false, 0, 0);
-    
+
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, models.triangleIndices);
     gl.drawElements(gl.TRIANGLES, models.triangleIndices.numItems, gl.UNSIGNED_SHORT, 0);
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, models.pointsPosition);
+    gl.vertexAttribPointer(shader.vertexPositionAttribute, models.pointsPosition.itemSize, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.POINTS, 0, models.pointsPosition.numItems);
   };
   
   var animFramRequest;
