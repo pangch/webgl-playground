@@ -17,13 +17,17 @@ define(['gl-matrix'], function(glm) {
   var objectVelocityMapFrameBuffer1;
 
   // An 3D grid to locate all objects
-  var spaceGridSize = 256;
-  var spaceGridTextureSize = 4096; // 256 * 256 * 256 = 4096 * 4096
+  var spaceGridSize = 64;
+  var spaceGridTextureSize = 512; // 64 * 64 * 64 = 512 * 512
   var spaceGridFrameBuffer;
   
   var useInitialObjectMaps = true;
   
   var initInitialObjectPositionMap = function(gl) {
+    if (initialObjectVelocityMap) {
+      gl.deleteTexture(initialObjectPositionMap);
+    }
+    
     // First pos is the origin. Used for static objects in the scene.
     var pos = [];
     
@@ -31,12 +35,13 @@ define(['gl-matrix'], function(glm) {
     var halfGrid = oneGrid / 2;
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        // if (i == 4 && j == 4) {
+        // if (i == 2 && j == 2) {
         //   pos.push(0, 0, 0.0);
         // } else {
-        //   pos.push(i * 2.0 + 10, j * 2.0 + 11, 0.0);
+        //   pos.push(i + 10, j + 11, 0.0);
         // }
         pos.push(i * oneGrid + halfGrid, j * oneGrid + halfGrid, 10.0);
+        // pos.push(Math.random() * spaceGridSize, Math.random() * spaceGridSize , Math.random() * spaceGridSize);
       }      
     }
     
@@ -50,14 +55,18 @@ define(['gl-matrix'], function(glm) {
   }
   
   var initInitialObjectVelocityMap = function(gl) {
+    if (initialObjectVelocityMap) {
+      gl.deleteTexture(initialObjectVelocityMap);
+    }
+    
     // First pos is the origin. Used for static objects in the scene.
     var pos = [];
 
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        // pos.push((Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4, (Math.random() + 1.0) * 1.0);
+        // pos.push((Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.3, (Math.random() + 0.1) * 0.3);
         // pos.push(0.0, 0.0, (Math.random() + 1.0) * 4.0);
-        var dx = (i + j) % 2 == 0 ? 0.4 : -0.2;
+        var dx = (i + j) % 2 == 0 ? 0.4 : -0.4;
         if (j == 1) {
           dx = -dx;
         }
@@ -275,7 +284,7 @@ define(['gl-matrix'], function(glm) {
   var drawSpaceGridVisualization = function(gl, shader) {
     gl.useProgram(shader.testProgram);
     
-    gl.viewport(0, 0, spaceGridTextureSize * 5.0, spaceGridTextureSize * 5.0);
+    gl.viewport(0, 0, spaceGridTextureSize * 10.0, spaceGridTextureSize * 10.0);
     
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -320,8 +329,10 @@ define(['gl-matrix'], function(glm) {
       return objectPositionMapFrameBuffer.texture;
     },
     
-    reset: function() {
-      useInitialObjectMaps = true;
+    reset: function(gl) {
+      initInitialObjectPositionMap(gl, 10.0);
+      initInitialObjectVelocityMap(gl);
+      useInitialObjectMaps = true;      
     }
   }
 });

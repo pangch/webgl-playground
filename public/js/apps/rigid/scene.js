@@ -46,13 +46,13 @@ define([
 
     glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 2000.0);
         
-    glm.mat4.translate(pMatrix, pMatrix, [-100.0, -100.0, -400.0]);    
+    glm.mat4.translate(pMatrix, pMatrix, [-50.0, -50.0, -200.0]);    
     glm.mat4.rotate(pMatrix, pMatrix, -1.57, [0, 1, 0]);
     glm.mat4.rotate(pMatrix, pMatrix, -1.57, [1, 0, 0]);    
     
     glm.mat4.identity(mvMatrix);
     
-    glm.mat4.translate(mvMatrix, mvMatrix, [-500, -100, 0]);
+    glm.mat4.translate(mvMatrix, mvMatrix, [-120, -25, 0]);
     
     glm.mat4.rotate(mvMatrix, mvMatrix, camera.getXRot(), [0, 0, 1]);
     glm.mat4.rotate(mvMatrix, mvMatrix, camera.getYRot(), [0, 1, 0]);    
@@ -129,7 +129,7 @@ define([
     
     handleKeyEvent: function(evt) {
       if (evt.type === 'keydown' && evt.keyCode === 82) {
-        physics.reset();
+        physics.reset(gl);
       }
       return true;
     }
