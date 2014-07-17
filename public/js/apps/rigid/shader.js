@@ -1,24 +1,25 @@
 define(['./utils', 
         'text!./vertex.glsl', 
         'text!./fragment.glsl',
-        'text!./fill-rectangle-vertex.glsl',
-        'text!./object-points-vertex.glsl',
+        'text!./space-grid-vertex.glsl',
         'text!./space-grid-fragment.glsl',        
+        'text!./space-grid-visualization-vertex.glsl',
+        'text!./space-grid-visualization-fragment.glsl',
+        'text!./object-map-vertex.glsl',
         'text!./object-position-fragment.glsl',
-        'text!./object-velocity-fragment.glsl',
-        'text!./test-vertex.glsl',
-        'text!./test-fragment.glsl'
+        'text!./object-velocity-fragment.glsl'        
         ], function(
         utils, 
         vertexShader, 
         fragmentShader,
-        fillRectangleVertexShader,
-        objectPointsVertexShader,
+        spaceGridVertexShader,
         spaceGridFragmentShader,
+        spaceGridVisualizationVertexShader, 
+        spaceGridVisualizationFragmentShader,
+        objectMapVertexShader,
         objectPositionFragmentShader,
-        objectVelocityFragmentShader,
-        testVertexShader, 
-        testFragmentShader) {
+        objectVelocityFragmentShader
+      ) {
   
   // Create a shader from source
 	var buildShader = function(gl, source, type) {
@@ -42,7 +43,7 @@ define(['./utils',
       // Space grid generation
       var spaceGridProgram = gl.createProgram();
       
-	    gl.attachShader(spaceGridProgram, buildShader(gl, objectPointsVertexShader, gl.VERTEX_SHADER));
+	    gl.attachShader(spaceGridProgram, buildShader(gl, spaceGridVertexShader, gl.VERTEX_SHADER));
 	    gl.attachShader(spaceGridProgram, buildShader(gl, spaceGridFragmentShader, gl.FRAGMENT_SHADER));
 	    gl.linkProgram(spaceGridProgram);
 
@@ -57,25 +58,25 @@ define(['./utils',
       spaceGridProgram.objectPositionMapUniform = gl.getUniformLocation(spaceGridProgram, "uObjectPositionMap");
 	    this.spaceGridProgram = spaceGridProgram;
       
-      // Test program
-      var testProgram = gl.createProgram();
+      // Space grid visualization program
+      var spaceGridVisualizationProgram = gl.createProgram();
       
-	    gl.attachShader(testProgram, buildShader(gl, testVertexShader, gl.VERTEX_SHADER));
-	    gl.attachShader(testProgram, buildShader(gl, testFragmentShader, gl.FRAGMENT_SHADER));
-	    gl.linkProgram(testProgram);
+	    gl.attachShader(spaceGridVisualizationProgram, buildShader(gl, spaceGridVisualizationVertexShader, gl.VERTEX_SHADER));
+	    gl.attachShader(spaceGridVisualizationProgram, buildShader(gl, spaceGridVisualizationFragmentShader, gl.FRAGMENT_SHADER));
+	    gl.linkProgram(spaceGridVisualizationProgram);
 
-	    if (!gl.getProgramParameter(testProgram, gl.LINK_STATUS)) {
+	    if (!gl.getProgramParameter(spaceGridVisualizationProgram, gl.LINK_STATUS)) {
 	      throw new Error("Failed to initialise shaders");
 	    }
 
-      testProgram.vertexPositionAttribute = gl.getAttribLocation(spaceGridProgram, "aVertexPosition");
-      testProgram.spaceGridUniform = gl.getUniformLocation(spaceGridProgram, "uSpaceGrid");
-	    this.testProgram = testProgram;
+      spaceGridVisualizationProgram.vertexPositionAttribute = gl.getAttribLocation(spaceGridProgram, "aVertexPosition");
+      spaceGridVisualizationProgram.spaceGridUniform = gl.getUniformLocation(spaceGridProgram, "uSpaceGrid");
+	    this.spaceGridVisualizationProgram = spaceGridVisualizationProgram;
       
       // Object velocity output
       var objectVelocityProgram = gl.createProgram();
       
-	    gl.attachShader(objectVelocityProgram, buildShader(gl, fillRectangleVertexShader, gl.VERTEX_SHADER));
+	    gl.attachShader(objectVelocityProgram, buildShader(gl, objectMapVertexShader, gl.VERTEX_SHADER));
 	    gl.attachShader(objectVelocityProgram, buildShader(gl, objectVelocityFragmentShader, gl.FRAGMENT_SHADER));
 	    gl.linkProgram(objectVelocityProgram);
 
@@ -95,7 +96,7 @@ define(['./utils',
       // Object position output
       var objectPositionProgram = gl.createProgram();
       
-	    gl.attachShader(objectPositionProgram, buildShader(gl, fillRectangleVertexShader, gl.VERTEX_SHADER));
+	    gl.attachShader(objectPositionProgram, buildShader(gl, objectMapVertexShader, gl.VERTEX_SHADER));
 	    gl.attachShader(objectPositionProgram, buildShader(gl, objectPositionFragmentShader, gl.FRAGMENT_SHADER));
 	    gl.linkProgram(objectPositionProgram);
 

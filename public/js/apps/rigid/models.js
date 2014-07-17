@@ -1,6 +1,6 @@
 define(['./assets'], function(assets) {
   
-  var sphereRadius = 2.5;
+  var sphereRadius = 1.0;
   
   var addCube = function(objects, color, indexBase, objectIndex) {  
     var addFace = function(vertices, normals) {

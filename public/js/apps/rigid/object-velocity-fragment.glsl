@@ -11,14 +11,14 @@ uniform sampler2D uSpaceGrid;
 uniform sampler2D uObjectPositionMap; // Old positions
 uniform sampler2D uObjectVelocityMap; // Old velocity
 
-#define COLLISION_DIST 3.0
-#define COLLISION_DECAY 0.99
-#define BOUNCE_DIST 2.0
+#define COLLISION_DIST 2.0
+#define COLLISION_DECAY 0.999
+#define BOUNCE_DIST 1.0
 #define BOUNCE_DECAY 0.85
-#define FRICTION_MULTIPLIER -0.02
-#define GRAVITY 0.06
+#define FRICTION_MULTIPLIER -0.001
+#define GRAVITY 0.0001
 
-#define WALL_DIST 100.0
+#define WALL_DIST 72.0
 
 // Convert from [-1, 1] to [0, 1]
 vec2 toTexCoord(vec2 vPosition) {
@@ -97,9 +97,9 @@ void main(void) {
   
   // Collision  
   ivec3 iPosition = ivec3(position);
-  for (int i = -3; i <= 3; i++) {
-    for (int j = -3; j <= 3; j++) {
-      for (int k = -3; k <= 3; k++) {
+  for (int i = -1; i <= 1; i++) {
+    for (int j = -1; j <= 1; j++) {
+      for (int k = -1; k <= 1; k++) {
         if (i != 0 || j != 0 || k != 0) {
           collision(position, iPosition + ivec3(i, j, k), velocity, force);          
         }
@@ -108,7 +108,7 @@ void main(void) {
   }  
     
   // Friction
-  if (position.z < 2.1 && abs(velocity.z) < 0.1) {
+  if (position.z < 1.5 && abs(velocity.z) < 0.1) {
     force.xy += FRICTION_MULTIPLIER * velocity.xy;
   }
         

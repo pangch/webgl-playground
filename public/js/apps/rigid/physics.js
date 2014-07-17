@@ -1,7 +1,5 @@
 define(['gl-matrix'], function(glm) {
   
-  var sphereRadius = 0.5;
-  
   // The size of the 2D grids mapping position and velocity of each object.
   var objectMapSize;
   
@@ -35,12 +33,6 @@ define(['gl-matrix'], function(glm) {
     var halfGrid = oneGrid / 2;
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        // if (i == 2 && j == 2) {
-        //   pos.push(0, 0, 0.0);
-        // } else {
-        //   pos.push(i + 10, j + 11, 0.0);
-        // }
-        // pos.push(i * oneGrid + halfGrid, j * oneGrid + halfGrid, 10.0);
         pos.push(Math.random() * 99, Math.random() * 99 , Math.random() * 99);
       }      
     }
@@ -64,13 +56,7 @@ define(['gl-matrix'], function(glm) {
 
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        pos.push((Math.random() - 0.5), (Math.random() - 0.5), (Math.random() - 0.4));
-        // pos.push(0.0, 0.0, (Math.random() + 1.0) * 4.0);
-        // var dx = (i + j) % 2 == 0 ? 0.4 : -0.4;
-        // if (j == 1) {
-        //   dx = -dx;
-        // }
-        // pos.push(dx, 0.0, 0.2);
+        pos.push((Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1, (Math.random() - 0.4) * 0.1);
       }      
     }
     
@@ -83,8 +69,8 @@ define(['gl-matrix'], function(glm) {
     initialObjectVelocityMap = texture;
   }
   
-  var initFillRectangle = function(gl) {
-    // Create boundary object buffers
+  // Create boundary object buffers
+  var initFillRectangle = function(gl) {    
     fillRectangle = {};
     var vertices = [
         -1.0, -1.0, 
@@ -114,8 +100,8 @@ define(['gl-matrix'], function(glm) {
     objectPoints.vertexCount = objectMapSize * objectMapSize;
   }
   
-  var createFrameBuffer = function(gl, size) {
-    // Create framebuffer and bind texture object
+  // Create framebuffer and bind texture object
+  var createFrameBuffer = function(gl, size) {    
     var frameBuffer = gl.createFramebuffer();    
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
     
@@ -140,8 +126,15 @@ define(['gl-matrix'], function(glm) {
     objectVelocityMapFrameBuffer = createFrameBuffer(gl, objectMapSize);
     objectVelocityMapFrameBuffer1 = createFrameBuffer(gl, objectMapSize);
   }
-  
-  var swapBuffers = function() {
+
+  var initSpaceGridFrameBuffer = function(gl) {
+    spaceGridFrameBuffer = createFrameBuffer(gl, spaceGridTextureSize);
+  }
+    
+  // In each iteration, old object positions/velocity are read from the old 
+  // buffer and written to the new buffer. At the end of each iteration,
+  // the buffers are swapped.
+  var swapBuffers = function() {    
     var tmp = objectPositionMapFrameBuffer;
     objectPositionMapFrameBuffer = objectPositionMapFrameBuffer1;
     objectPositionMapFrameBuffer1 = tmp;
@@ -151,11 +144,7 @@ define(['gl-matrix'], function(glm) {
     objectVelocityMapFrameBuffer1 = tmp;    
   }
   
-  var initSpaceGridFrameBuffer = function(gl) {
-    // Create framebuffer and bind texture object
-    spaceGridFrameBuffer = createFrameBuffer(gl, spaceGridTextureSize);
-  }
-  
+  // Draw a rentangle covering the whole viewport
   var drawFillRectangle = function(gl, vertexAttribute) {
     gl.bindBuffer(gl.ARRAY_BUFFER, fillRectangle.vertices);
     gl.vertexAttribPointer(vertexAttribute, 2, gl.FLOAT, false, 0, 0);
@@ -163,6 +152,7 @@ define(['gl-matrix'], function(glm) {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
   
+  // Draw the index of each object as a point.
   var drawObjectPoints = function(gl, vertexAttribute) {
     gl.bindBuffer(gl.ARRAY_BUFFER, objectPoints.vertices);
     gl.vertexAttribPointer(vertexAttribute, 2, gl.FLOAT, false, 0, 0);
@@ -170,7 +160,9 @@ define(['gl-matrix'], function(glm) {
     gl.drawArrays(gl.POINTS, 0, objectPoints.vertexCount);
   }
   
-  var drawObjectVelocityMap = function(gl, shader) {
+  // Calculate the velocity of each object for the next iteration. 
+  // All the collision, bouncing, gravity simulation is done at this step.
+  var updateObjectVelocityMap = function(gl, shader) {
     gl.useProgram(shader.objectVelocityProgram);
     gl.bindFramebuffer(gl.FRAMEBUFFER, objectVelocityMapFrameBuffer);
     
@@ -214,7 +206,8 @@ define(['gl-matrix'], function(glm) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   };
   
-  var drawObjectPositionMap = function(gl, shader) {
+  // Calculate the position of each object for the next iteration
+  var updateObjectPositionMap = function(gl, shader) {
     gl.useProgram(shader.objectPositionProgram);
     gl.bindFramebuffer(gl.FRAMEBUFFER, objectPositionMapFrameBuffer);
     
@@ -251,7 +244,9 @@ define(['gl-matrix'], function(glm) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   };
   
-  var drawSpaceGrid = function(gl, shader) {
+  // Generate a dictionary from a 3D coordinate in the space to the object occupying that
+  // coordinate. The dictionary is formatted as a 2D texture.
+  var generateSpaceGrid = function(gl, shader) {
     gl.useProgram(shader.spaceGridProgram);
     gl.bindFramebuffer(gl.FRAMEBUFFER, spaceGridFrameBuffer);
     
@@ -282,7 +277,7 @@ define(['gl-matrix'], function(glm) {
   }
   
   var drawSpaceGridVisualization = function(gl, shader) {
-    gl.useProgram(shader.testProgram);
+    gl.useProgram(shader.spaceGridVisualizationProgram);
     
     gl.viewport(0, 0, spaceGridTextureSize * 10.0, spaceGridTextureSize * 10.0);
     
@@ -293,12 +288,12 @@ define(['gl-matrix'], function(glm) {
     gl.activeTexture(gl.TEXTURE0);    
     gl.bindTexture(gl.TEXTURE_2D, spaceGridFrameBuffer.texture);
     
-    gl.uniform1i(shader.testProgram.spaceGridUniform, 0);
+    gl.uniform1i(shader.spaceGridVisualizationProgram.spaceGridUniform, 0);
     
-    gl.enableVertexAttribArray(shader.testProgram.vertexPositionAttribute);
+    gl.enableVertexAttribArray(shader.spaceGridVisualizationProgram.vertexPositionAttribute);
     drawFillRectangle(gl, shader.spaceGridProgram.vertexPositionAttribute);
     
-    gl.disableVertexAttribArray(shader.testProgram.vertexPositionAttribute);    
+    gl.disableVertexAttribArray(shader.spaceGridVisualizationProgram.vertexPositionAttribute);    
   }
   
   return {
@@ -312,17 +307,22 @@ define(['gl-matrix'], function(glm) {
       initObjectPoints(gl);
 
       initObjectMapFrameBuffers(gl);
-      initSpaceGridFrameBuffer(gl);      
+      initSpaceGridFrameBuffer(gl);
     },
     
-    iterate: function(gl, shader) {      
-      swapBuffers();
+    iterate: function(gl, shader) {
+      // For each frame, run the physical simulation multiple times
+      // to make the objects move faster while not loosing the accuracy
+      // of the simulation.
+      for (var i = 0; i < 20; i++) {
+        swapBuffers();
       
-      drawSpaceGrid(gl, shader);
-      // drawSpaceGridVisualization(gl, shader);
-      drawObjectVelocityMap(gl, shader);
-      drawObjectPositionMap(gl, shader);
-      useInitialObjectMaps = false;
+        generateSpaceGrid(gl, shader);
+        // drawSpaceGridVisualization(gl, shader);
+        updateObjectVelocityMap(gl, shader);
+        updateObjectPositionMap(gl, shader);
+        useInitialObjectMaps = false;
+      }      
     },
     
     getObjectPositionMap: function() {

@@ -21,7 +21,7 @@ define([
   var pMatrix = glm.mat4.create();   // Projection matrix
   var mvMatrix = glm.mat4.create();  // Modelview matrix
   
-  var objectMapSize = 4;
+  var objectMapSize = 8;
   
   var setMatrixUniforms = function() {
     gl.uniformMatrix4fv(shader.pMatrixUniform, false, pMatrix);
@@ -46,13 +46,13 @@ define([
 
     glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 2000.0);
         
-    glm.mat4.translate(pMatrix, pMatrix, [-50.0, -50.0, -200.0]);    
+    glm.mat4.translate(pMatrix, pMatrix, [-40.0, -40.0, -160.0]);    
     glm.mat4.rotate(pMatrix, pMatrix, -1.57, [0, 1, 0]);
     glm.mat4.rotate(pMatrix, pMatrix, -1.57, [1, 0, 0]);    
     
     glm.mat4.identity(mvMatrix);
     
-    glm.mat4.translate(mvMatrix, mvMatrix, [-120, -25, 0]);
+    glm.mat4.translate(mvMatrix, mvMatrix, [-40, -15, 0]);
     
     glm.mat4.rotate(mvMatrix, mvMatrix, camera.getXRot(), [0, 0, 1]);
     glm.mat4.rotate(mvMatrix, mvMatrix, camera.getYRot(), [0, 1, 0]);    
@@ -63,7 +63,7 @@ define([
     gl.uniform1i(shader.useLightingUniform, true);
     gl.uniform3f(shader.ambientColorUniform, 0.5, 0.5, 0.5);
     
-    gl.uniform3f(shader.pointLightingPositionUniform, 100.0, 250.0, 250.0);
+    gl.uniform3f(shader.pointLightingPositionUniform, 50.0, 150.0, 150.0);
     gl.uniform3f(shader.pointLightingColorUniform, 0.5, 0.5, 0.5);
     
     // Bind position map
