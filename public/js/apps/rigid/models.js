@@ -184,7 +184,7 @@ define(['./assets'], function(assets) {
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
         // indexBase = addCube(gl, objects, colors[i % colors.length], indexBase, i);
-        var color = colors[(i + j) % colors.length];
+        var color = colors[(i * objectMapSize + j) % colors.length];
         indexBase = addSphere(objects, color , indexBase, i / objectMapSize, j / objectMapSize);
       }      
     }

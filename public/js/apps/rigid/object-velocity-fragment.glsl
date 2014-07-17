@@ -13,10 +13,10 @@ uniform sampler2D uObjectVelocityMap; // Old velocity
 
 #define COLLISION_DIST 3.0
 #define COLLISION_DECAY 0.99
-#define BOUNCE_DIST 1.0
-#define BOUNCE_DECAY 0.8
+#define BOUNCE_DIST 2.0
+#define BOUNCE_DECAY 0.85
 #define FRICTION_MULTIPLIER -0.02
-#define GRAVITY 0.006
+#define GRAVITY 0.06
 
 #define WALL_DIST 100.0
 
@@ -63,19 +63,20 @@ void collision(vec3 position, ivec3 spacePosition, vec3 velocity, inout vec3 for
   
 }
 
-void bounce(vec3 position, float dist, vec3 velocity, vec3 normal, vec3 forceAdjustment, inout vec3 force) {
+bool bounce(vec3 position, float dist, vec3 velocity, vec3 normal, vec3 forceAdjustment, inout vec3 force) {
   if (dist > BOUNCE_DIST) {
     // Too far
-    return;
+    return false;
   }
   
   if (dot(velocity, normal) > 0.0) {
     // Already bounced
-    return;
+    return false;
   }
   
   force += -2.0 * BOUNCE_DECAY * abs(normal) * velocity;
   force += forceAdjustment;
+  return true;
 }
 
 void main(void) {
@@ -86,7 +87,15 @@ void main(void) {
   
   vec3 force = vec3(0.0, 0.0, -GRAVITY);
   
-  // Collision
+  // Bounce
+  bounce(position, position.x, velocity, vec3(1.0, 0.0, 0.0), vec3(0.0), force);
+  bounce(position, position.y, velocity, vec3(0.0, 1.0, 0.0), vec3(0.0), force);
+  bounce(position, position.z, velocity, vec3(0.0, 0.0, 1.0), vec3(0.0, 0.0, GRAVITY), force);
+  bounce(position, WALL_DIST - position.x, velocity, vec3(-1.0, 0.0, 0.0), vec3(0.0), force);
+  bounce(position, WALL_DIST - position.y, velocity, vec3(0.0, -1.0, 0.0), vec3(0.0), force);
+  bounce(position, WALL_DIST - position.z, velocity, vec3(0.0, 0.0, -1.0), vec3(0.0), force);
+  
+  // Collision  
   ivec3 iPosition = ivec3(position);
   for (int i = -3; i <= 3; i++) {
     for (int j = -3; j <= 3; j++) {
@@ -96,19 +105,11 @@ void main(void) {
         }
       }
     }
-  }
-  
-  // Bounce
-  bounce(position, position.x, velocity, vec3(1.0, 0.0, 0.0), vec3(0.0), force);
-  bounce(position, position.y, velocity, vec3(0.0, 1.0, 0.0), vec3(0.0), force);
-  bounce(position, position.z, velocity, vec3(0.0, 0.0, 1.0), vec3(0.0, 0.0, GRAVITY), force);
-  bounce(position, WALL_DIST - position.x, velocity, vec3(-1.0, 0.0, 0.0), vec3(0.0), force);
-  bounce(position, WALL_DIST - position.y, velocity, vec3(0.0, -1.0, 0.0), vec3(0.0), force);
-  bounce(position, WALL_DIST - position.z, velocity, vec3(0.0, 0.0, -1.0), vec3(0.0), force);
+  }  
     
   // Friction
-  if (position.z < 1.0 && abs(velocity.z) < 0.01) {
-    force += FRICTION_MULTIPLIER * velocity;
+  if (position.z < 2.1 && abs(velocity.z) < 0.1) {
+    force.xy += FRICTION_MULTIPLIER * velocity.xy;
   }
         
   velocity += force;  

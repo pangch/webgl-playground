@@ -64,7 +64,7 @@ define(['gl-matrix'], function(glm) {
 
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        pos.push((Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.3, (Math.random() + 0.1) * 0.3);
+        pos.push((Math.random() - 0.5), (Math.random() - 0.5), (Math.random() - 0.4));
         // pos.push(0.0, 0.0, (Math.random() + 1.0) * 4.0);
         // var dx = (i + j) % 2 == 0 ? 0.4 : -0.4;
         // if (j == 1) {
