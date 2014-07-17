@@ -34,16 +34,17 @@ void collision(vec3 position, vec3 diff, vec3 velocity, inout vec3 force) {
   }
   vec3 neighborIndex = texture2D(uSpaceGrid, texCoord).xyz;
   if (neighborIndex.z > 0.0) {
-    // Real collision
     vec3 neighborPosition = texture2D(uObjectPositionMap, neighborIndex.xy).xyz;
     
-    if (distance(position, neighborPosition) < 2.0) {
+    if (distance(position, neighborPosition) < 1.5) {
+      // Real collision
       vec3 neighborVelocity = texture2D(uObjectVelocityMap, neighborIndex.xy).xyz;
       
       vec3 relativeVelocity = neighborVelocity - velocity;
-      vec3 relativePosition = neighborPosition - position;
+      vec3 relativePosition = position - neighborPosition;
+      // Detect if they are on a collision course
       if (dot(relativeVelocity, relativePosition) > 0.0) {        
-        force += relativeVelocity;
+        force += relativeVelocity * 0.99;
       }      
     }
   }
@@ -60,7 +61,7 @@ void main(void) {
   vec2 texCoord = toSpaceTexCoord(position);
   vec3 indexSG = texture2D(uSpaceGrid, texCoord).xyz;
     
-  vec3 force = vec3(0.0, 0.0, -0.0015);
+  vec3 force = vec3(0.0, 0.0, -0.0006);
   
   collision(position, vec3(0.0, 0.0, 1.0), velocity, force);
   collision(position, vec3(0.0, 1.0, 0.0), velocity, force);

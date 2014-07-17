@@ -36,7 +36,7 @@ define(['gl-matrix'], function(glm) {
         // } else {
         //   pos.push(i * 2.0 + 10, j * 2.0 + 11, 0.0);
         // }
-        pos.push(i * oneGrid + halfGrid, j * oneGrid + halfGrid, 0.0);        
+        pos.push(i * oneGrid + halfGrid, j * oneGrid + halfGrid, 10.0);
       }      
     }
     
@@ -57,11 +57,11 @@ define(['gl-matrix'], function(glm) {
       for (var j = 0; j < objectMapSize; j++) {
         // pos.push((Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4, (Math.random() + 1.0) * 1.0);
         // pos.push(0.0, 0.0, (Math.random() + 1.0) * 4.0);
-        var dx = (i + j) % 2 == 0 ? 0.1 : -0.1;
+        var dx = (i + j) % 2 == 0 ? 0.4 : -0.2;
         if (j == 1) {
           dx = -dx;
         }
-        pos.push(dx, 0.0, 0.45);
+        pos.push(dx, 0.0, 0.2);
       }      
     }
     
