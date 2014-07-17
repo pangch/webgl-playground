@@ -1,7 +1,5 @@
 precision mediump float;
 
-#define RADIUS 0.5
-
 uniform int uSpaceGridSize;
 uniform int uSpaceGridBlockSize;
 uniform float uSpaceGridTextureSizeInverse;
@@ -18,15 +16,15 @@ vec2 toTexCoord(vec2 vPosition) {
   return (vPosition + 1.0) * 0.5;
 }
 
-// Convert from position to texture coordinate of the space grid
+// Maps the 3D position to 2D texture coordination  
 vec2 toSpaceTexCoord(vec3 pos) {
-  // Maps the 3D position to 2D texture coordination  
   int z = int(pos.z);
   int dy = z / uSpaceGridBlockSize;
   int dx = z - dy * uSpaceGridBlockSize;
-  return vec2(pos.x + float(dx * uSpaceGridBlockSize), pos.y + float(dy * uSpaceGridBlockSize)) * uSpaceGridTextureSizeInverse;
+  
+  vec2 coord = vec2(float(int(pos.x)) + float(dx * uSpaceGridSize), float(int(pos.y)) + float(dy * uSpaceGridSize));
+  return (coord + 0.5) * uSpaceGridTextureSizeInverse;
 }
-
 
 void collision(vec3 position, vec3 diff, vec3 velocity, inout vec3 force) {
   vec2 texCoord = toSpaceTexCoord(position + diff);
@@ -35,14 +33,21 @@ void collision(vec3 position, vec3 diff, vec3 velocity, inout vec3 force) {
     return;
   }
   vec3 neighborIndex = texture2D(uSpaceGrid, texCoord).xyz;
-  if (neighborIndex.z > 0.9) {
+  if (neighborIndex.z > 0.0) {
+    // Real collision
     vec3 neighborPosition = texture2D(uObjectPositionMap, neighborIndex.xy).xyz;
-    if (distance(position, neighborPosition) < 2.0 * RADIUS) {
-      // Real collision
+    
+    if (distance(position, neighborPosition) < 2.0) {
       vec3 neighborVelocity = texture2D(uObjectVelocityMap, neighborIndex.xy).xyz;
-      force += (neighborVelocity - velocity) * 0.99;
-    }    
+      
+      vec3 relativeVelocity = neighborVelocity - velocity;
+      vec3 relativePosition = neighborPosition - position;
+      if (dot(relativeVelocity, relativePosition) > 0.0) {        
+        force += relativeVelocity;
+      }      
+    }
   }
+  
 }
 
 void main(void) {
@@ -51,9 +56,12 @@ void main(void) {
   vec3 position = texture2D(uObjectPositionMap, posIndex).xyz;
   vec3 velocity = texture2D(uObjectVelocityMap, posIndex).xyz;
   
-  vec3 force = vec3(0.0, 0.0, -0.015);
+  // Test if the space grid has been written correctly
+  vec2 texCoord = toSpaceTexCoord(position);
+  vec3 indexSG = texture2D(uSpaceGrid, texCoord).xyz;
+    
+  vec3 force = vec3(0.0, 0.0, -0.0015);
   
-
   collision(position, vec3(0.0, 0.0, 1.0), velocity, force);
   collision(position, vec3(0.0, 1.0, 0.0), velocity, force);
   collision(position, vec3(1.0, 0.0, 0.0), velocity, force);
@@ -61,7 +69,6 @@ void main(void) {
   collision(position, vec3(0.0, -1.0, 0.0), velocity, force);
   collision(position, vec3(-1.0, 0.0, 0.0), velocity, force);
   
-
   velocity += force;  
   gl_FragColor = vec4(velocity, 1.0);
 }

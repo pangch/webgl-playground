@@ -20,5 +20,6 @@ void main(void) {
   vec3 velocity = texture2D(uObjectVelocityMap, posIndex).xyz;
   
   pos += velocity;
+
   gl_FragColor = vec4(pos, 1.0);
 }

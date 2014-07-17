@@ -31,7 +31,12 @@ define(['gl-matrix'], function(glm) {
     var halfGrid = oneGrid / 2;
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        pos.push(i * oneGrid + halfGrid, j * oneGrid + halfGrid, 10.0);
+        // if (i == 4 && j == 4) {
+        //   pos.push(0, 0, 0.0);
+        // } else {
+        //   pos.push(i * 2.0 + 10, j * 2.0 + 11, 0.0);
+        // }
+        pos.push(i * oneGrid + halfGrid, j * oneGrid + halfGrid, 0.0);        
       }      
     }
     
@@ -50,13 +55,13 @@ define(['gl-matrix'], function(glm) {
 
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        // pos.push((Math.random() - 0.5) * 2.0, (Math.random() - 0.5) * 2.0, (Math.random() + 1.0) * 1.0);
+        // pos.push((Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4, (Math.random() + 1.0) * 1.0);
         // pos.push(0.0, 0.0, (Math.random() + 1.0) * 4.0);
-        var dx = (i + j) % 2 == 0 ? 0.5 : -0.5;
+        var dx = (i + j) % 2 == 0 ? 0.1 : -0.1;
         if (j == 1) {
           dx = -dx;
         }
-        pos.push(dx, 0.0, 1.5);
+        pos.push(dx, 0.0, 0.45);
       }      
     }
     
@@ -153,7 +158,7 @@ define(['gl-matrix'], function(glm) {
     gl.bindBuffer(gl.ARRAY_BUFFER, objectPoints.vertices);
     gl.vertexAttribPointer(vertexAttribute, 2, gl.FLOAT, false, 0, 0);
     
-    gl.drawArrays(gl.LINES, 0, objectPoints.vertexCount);
+    gl.drawArrays(gl.POINTS, 0, objectPoints.vertexCount);
   }
   
   var drawObjectVelocityMap = function(gl, shader) {
@@ -255,6 +260,7 @@ define(['gl-matrix'], function(glm) {
     }    
     gl.uniform1i(shader.spaceGridProgram.objectPositionMapUniform, 0);
     
+    gl.uniform1i(shader.spaceGridProgram.spaceGridSizeUniform, spaceGridSize);
     gl.uniform1i(shader.spaceGridProgram.spaceGridBlockSizeUniform, spaceGridTextureSize / spaceGridSize);
     gl.uniform1f(shader.spaceGridProgram.spaceGridTextureSizeInverseUniform, 1.0 / spaceGridTextureSize);
     
@@ -264,6 +270,26 @@ define(['gl-matrix'], function(glm) {
     gl.disableVertexAttribArray(shader.spaceGridProgram.vertexPositionAttribute);
     
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  }
+  
+  var drawSpaceGridVisualization = function(gl, shader) {
+    gl.useProgram(shader.testProgram);
+    
+    gl.viewport(0, 0, spaceGridTextureSize * 5.0, spaceGridTextureSize * 5.0);
+    
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    
+    // Bind position map
+    gl.activeTexture(gl.TEXTURE0);    
+    gl.bindTexture(gl.TEXTURE_2D, spaceGridFrameBuffer.texture);
+    
+    gl.uniform1i(shader.testProgram.spaceGridUniform, 0);
+    
+    gl.enableVertexAttribArray(shader.testProgram.vertexPositionAttribute);
+    drawFillRectangle(gl, shader.spaceGridProgram.vertexPositionAttribute);
+    
+    gl.disableVertexAttribArray(shader.testProgram.vertexPositionAttribute);    
   }
   
   return {
@@ -284,6 +310,7 @@ define(['gl-matrix'], function(glm) {
       swapBuffers();
       
       drawSpaceGrid(gl, shader);
+      // drawSpaceGridVisualization(gl, shader);
       drawObjectVelocityMap(gl, shader);
       drawObjectPositionMap(gl, shader);
       useInitialObjectMaps = false;

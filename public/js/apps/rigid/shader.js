@@ -5,7 +5,9 @@ define(['./utils',
         'text!./object-points-vertex.glsl',
         'text!./space-grid-fragment.glsl',        
         'text!./object-position-fragment.glsl',
-        'text!./object-velocity-fragment.glsl'
+        'text!./object-velocity-fragment.glsl',
+        'text!./test-vertex.glsl',
+        'text!./test-fragment.glsl'
         ], function(
         utils, 
         vertexShader, 
@@ -14,7 +16,9 @@ define(['./utils',
         objectPointsVertexShader,
         spaceGridFragmentShader,
         objectPositionFragmentShader,
-        objectVelocityFragmentShader) {
+        objectVelocityFragmentShader,
+        testVertexShader, 
+        testFragmentShader) {
   
   // Create a shader from source
 	var buildShader = function(gl, source, type) {
@@ -47,10 +51,26 @@ define(['./utils',
 	    }
 
       spaceGridProgram.vertexPositionAttribute = gl.getAttribLocation(spaceGridProgram, "aVertexPosition");
+      spaceGridProgram.spaceGridSizeUniform = gl.getUniformLocation(spaceGridProgram, "uSpaceGridSize");
       spaceGridProgram.spaceGridBlockSizeUniform = gl.getUniformLocation(spaceGridProgram, "uSpaceGridBlockSize");
       spaceGridProgram.spaceGridTextureSizeInverseUniform = gl.getUniformLocation(spaceGridProgram, "uSpaceGridTextureSizeInverse");
       spaceGridProgram.objectPositionMapUniform = gl.getUniformLocation(spaceGridProgram, "uObjectPositionMap");
 	    this.spaceGridProgram = spaceGridProgram;
+      
+      // Test program
+      var testProgram = gl.createProgram();
+      
+	    gl.attachShader(testProgram, buildShader(gl, testVertexShader, gl.VERTEX_SHADER));
+	    gl.attachShader(testProgram, buildShader(gl, testFragmentShader, gl.FRAGMENT_SHADER));
+	    gl.linkProgram(testProgram);
+
+	    if (!gl.getProgramParameter(testProgram, gl.LINK_STATUS)) {
+	      throw new Error("Failed to initialise shaders");
+	    }
+
+      testProgram.vertexPositionAttribute = gl.getAttribLocation(spaceGridProgram, "aVertexPosition");
+      testProgram.spaceGridUniform = gl.getUniformLocation(spaceGridProgram, "uSpaceGrid");
+	    this.testProgram = testProgram;
       
       // Object velocity output
       var objectVelocityProgram = gl.createProgram();

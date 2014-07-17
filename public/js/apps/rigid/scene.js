@@ -21,7 +21,7 @@ define([
   var pMatrix = glm.mat4.create();   // Projection matrix
   var mvMatrix = glm.mat4.create();  // Modelview matrix
   
-  var objectMapSize = 2;
+  var objectMapSize = 4;
   
   var setMatrixUniforms = function() {
     gl.uniformMatrix4fv(shader.pMatrixUniform, false, pMatrix);
@@ -98,7 +98,7 @@ define([
     
     camera.animate();
     physics.iterate(gl, shader);
-    drawScene();    
+    drawScene(); 
   };
 
   return {
