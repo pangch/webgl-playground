@@ -63,7 +63,7 @@ define([
     gl.uniform1i(shader.useLightingUniform, true);
     gl.uniform3f(shader.ambientColorUniform, 0.5, 0.5, 0.5);
     
-    gl.uniform3f(shader.pointLightingPositionUniform, 50.0, 150.0, 150.0);
+    gl.uniform3f(shader.pointLightingPositionUniform, 50.0, 50.0, 150.0);
     gl.uniform3f(shader.pointLightingColorUniform, 0.5, 0.5, 0.5);
     
     // Bind position map

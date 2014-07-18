@@ -56,7 +56,7 @@ define(['gl-matrix'], function(glm) {
 
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        pos.push((Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1, (Math.random() - 0.4) * 0.1);
+        pos.push((Math.random() - 0.5) * 0.06, (Math.random() - 0.5) * 0.06, (Math.random() - 0.3) * 0.05);
       }      
     }
     
@@ -316,7 +316,7 @@ define(['gl-matrix'], function(glm) {
       // For each frame, run the physical simulation multiple times
       // to make the objects move faster while not loosing the accuracy
       // of the simulation.
-      for (var i = 0; i < 20; i++) {
+      for (var i = 0; i < 28; i++) {
         swapBuffers();
       
         generateSpaceGrid(gl, shader);
