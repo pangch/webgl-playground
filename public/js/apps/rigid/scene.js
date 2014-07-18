@@ -46,8 +46,8 @@ define([
 
     glm.mat4.perspective(pMatrix, 0.7854, width / height, 0.1, 2000.0);
         
-    glm.mat4.translate(pMatrix, pMatrix, [-40.0, -40.0, -160.0]);    
-    glm.mat4.rotate(pMatrix, pMatrix, -1.57, [0, 1, 0]);
+    glm.mat4.translate(pMatrix, pMatrix, [-20.0, -40.0, -160.0]);    
+    glm.mat4.rotate(pMatrix, pMatrix, -1.87, [0, 1, 0]);
     glm.mat4.rotate(pMatrix, pMatrix, -1.57, [1, 0, 0]);    
     
     glm.mat4.identity(mvMatrix);
@@ -81,6 +81,7 @@ define([
     gl.enableVertexAttribArray(shader.objectIndexAttribute);
     
     models.drawAxis(gl, shader);    
+    models.drawGrid(gl, shader);
     gl.uniform1i(shader.drawingObjectsUniform, true);
     
     // Draw all objects

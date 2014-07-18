@@ -33,7 +33,7 @@ define(['gl-matrix'], function(glm) {
     var halfGrid = oneGrid / 2;
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        pos.push(Math.random() * 99, Math.random() * 99 , Math.random() * 99);
+        pos.push(Math.random() * 72, Math.random() * 72 , Math.random() * 72);
       }      
     }
     
@@ -308,6 +308,8 @@ define(['gl-matrix'], function(glm) {
 
       initObjectMapFrameBuffers(gl);
       initSpaceGridFrameBuffer(gl);
+      
+      useInitialObjectMaps = true;
     },
     
     iterate: function(gl, shader) {

@@ -176,7 +176,13 @@ define(['./assets'], function(assets) {
       [0.9, 0.6, 0.4, 1.0],
       [0.3, 0.5, 1.0, 1.0],
       [0.5, 1.0, 0.3, 1.0],
-      [1.0, 0.3, 0.5, 1.0]
+      [1.0, 0.3, 0.5, 1.0],
+      [0.3, 0.3, 0.7, 1.0],
+      [0.3, 0.7, 0.3, 1.0],
+      [0.7, 0.3, 0.3, 1.0],
+      [1.0, 0.7, 0.3, 1.0],
+      [0.7, 0.3, 1.0, 1.0],
+      [0.3, 1.0, 0.7, 1.0]
     ];
     
     initSphere(10, sphereRadius);
@@ -235,6 +241,7 @@ define(['./assets'], function(assets) {
   
   var axisVerticesBuffer, axisNormalsBuffer, axisColorsBuffer;
   
+  var WALL_DIST = 72;
   var initAxis = function(gl) {
     var vertices = [
         0.0,   0.0,   0.0,
@@ -242,7 +249,11 @@ define(['./assets'], function(assets) {
         0.0,   0.0,   0.0,
         0.0, 500.0,   0.0,
         0.0,   0.0,   0.0,
-        0.0,   0.0, 500.0
+        0.0,   0.0, 500.0,
+       72.0,   0.0,   0.0,
+       72.0,  72.0,   0.0,
+        0.0,  72.0,   0.0,
+       72.0,  72.0,   0.0
     ];
   
     axisVerticesBuffer = gl.createBuffer();
@@ -255,12 +266,16 @@ define(['./assets'], function(assets) {
       0.0, 1.0, 0.0,
       0.0, 1.0, 0.0,
       1.0, 0.0, 0.0,
-      1.0, 0.0, 0.0
+      1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0,
+      0.0, 0.0, 1.0,
+      0.0, 0.0, 1.0,
+      0.0, 0.0, 1.0
     ];
   
     axisNormalsBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, axisNormalsBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
         
     var colors = [
       1.0, 0.0, 0.0, 1.0,
@@ -268,11 +283,56 @@ define(['./assets'], function(assets) {
       0.0, 1.0, 0.0, 1.0,
       0.0, 1.0, 0.0, 1.0,
       0.0, 0.0, 1.0, 1.0,
-      0.0, 0.0, 1.0, 1.0
+      0.0, 0.0, 1.0, 1.0,
+      1.0, 1.0, 0.0, 1.0,
+      1.0, 1.0, 0.0, 1.0,
+      1.0, 1.0, 0.0, 1.0,
+      1.0, 1.0, 0.0, 1.0
     ];
   
     axisColorsBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, axisColorsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);    
+  };
+  
+  
+  var gridVerticesBuffer, gridNormalsBuffer, gridColorsBuffer;
+  
+  var initGrid = function(gl) {
+    var vertices = [];
+    
+    var gridSize = 36;
+    var limit = gridSize * 10;
+    for (var i = -10; i <= 10; i++) {
+      var pos = i * gridSize;
+      vertices.push(pos, limit, 0.0, pos, -limit, 0.0);
+    }
+    
+    for (var i = -10; i <= 10; i++) {
+      var pos = i * gridSize;
+      vertices.push(limit, pos, 0.0, -limit, pos, 0.0);
+    }
+    
+    gridVerticesBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, gridVerticesBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  
+    var normals = [];
+    for (var i = 0; i < 84; i++) {
+      normals.push(0.0, 0.0, 1.0);
+    }
+  
+    gridNormalsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, gridNormalsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+        
+    var colors = [];
+    for (var i = 0; i < 84; i++) {
+      colors.push(0.1, 0.1, 0.1, 0.1);
+    }
+  
+    gridColorsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, gridColorsBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);    
   };
   
@@ -283,6 +343,7 @@ define(['./assets'], function(assets) {
       this.objects.objectMapSize = objectPositionProgram;
       
       initAxis(gl);
+      initGrid(gl);
     },
     
     draw: function(gl, shader) {
@@ -317,8 +378,27 @@ define(['./assets'], function(assets) {
       gl.disableVertexAttribArray(shader.objectIndexAttribute);
       gl.vertexAttrib2f(shader.objectIndexAttribute, 0.0, 0.0);
             
-      gl.lineWidth(1.0);
-      gl.drawArrays(gl.LINES, 0, 6);
+      gl.lineWidth(2.0);
+      gl.drawArrays(gl.LINES, 0, 10);
+      
+      gl.enableVertexAttribArray(shader.objectIndexAttribute);
+    },
+    
+    drawGrid: function(gl, shader) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, gridVerticesBuffer);
+      gl.vertexAttribPointer(shader.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+      
+      gl.bindBuffer(gl.ARRAY_BUFFER, gridNormalsBuffer);
+      gl.vertexAttribPointer(shader.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+      
+      gl.bindBuffer(gl.ARRAY_BUFFER, gridColorsBuffer);
+      gl.vertexAttribPointer(shader.vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
+      
+      gl.disableVertexAttribArray(shader.objectIndexAttribute);
+      gl.vertexAttrib2f(shader.objectIndexAttribute, 0.0, 0.0);
+            
+      gl.lineWidth(0.2);
+      gl.drawArrays(gl.LINES, 0, 84);
       
       gl.enableVertexAttribArray(shader.objectIndexAttribute);
     }

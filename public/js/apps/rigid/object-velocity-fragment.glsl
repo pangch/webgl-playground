@@ -15,7 +15,7 @@ uniform sampler2D uObjectVelocityMap; // Old velocity
 #define COLLISION_DECAY 0.999
 #define BOUNCE_DIST 1.0
 #define BOUNCE_DECAY 0.85
-#define FRICTION_MULTIPLIER -0.001
+#define FRICTION_MULTIPLIER -0.0006
 #define GRAVITY 0.0001
 
 #define WALL_DIST 72.0
@@ -93,7 +93,7 @@ void main(void) {
   bounce(position, position.z, velocity, vec3(0.0, 0.0, 1.0), vec3(0.0, 0.0, GRAVITY), force);
   bounce(position, WALL_DIST - position.x, velocity, vec3(-1.0, 0.0, 0.0), vec3(0.0), force);
   bounce(position, WALL_DIST - position.y, velocity, vec3(0.0, -1.0, 0.0), vec3(0.0), force);
-  bounce(position, WALL_DIST - position.z, velocity, vec3(0.0, 0.0, -1.0), vec3(0.0), force);
+  // bounce(position, WALL_DIST - position.z, velocity, vec3(0.0, 0.0, -1.0), vec3(0.0), force);
   
   // Collision  
   ivec3 iPosition = ivec3(position);
