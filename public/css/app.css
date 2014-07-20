@@ -85,9 +85,10 @@ ul.navigator li:first-of-type {
 }
 
 ul.app-menu {
-  display: block;
-  margin-left: 64px;
+  margin: 12px 80px;
+  padding: 12px 32px;
   list-style-type: none;
+  border-top: 1px dashed #ddd;
 }
 
 ul.app-menu a {
@@ -97,9 +98,14 @@ ul.app-menu a {
 }
 
 ul.app-menu li {
-  display: block;
-  margin: 20px;
+  display: inline-block;
+  margin: 10px;
   width: 500px;
+  vertical-align: top;
+}
+
+ul.app-menu h3 {
+  margin: 10px 0;
 }
 
 ul.app-menu p {
