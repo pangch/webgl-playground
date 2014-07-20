@@ -21,13 +21,15 @@
 
 body {
 	margin: 0;
-  font-family: "Helvetica Neue", Helvetica,Arial, sans-serif;
+  padding: 0;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   background: #EEE;
   
   -webkit-font-smoothing: antialiased !important;  
 }
 
 a {
+  color: #29f;
   text-decoration: none;  
 }
 
@@ -41,6 +43,7 @@ div.header {
   padding: 0 40px;
   width: 500px;
   border-left: 1px solid #aaa;
+  clear: both;
 }
 
 div.header h1 {
@@ -57,13 +60,18 @@ div.header h2 {
   color: #999;
 }
 
+div.footer {
+  margin: 10px 122px;
+  color: #999;
+  font-size: 9pt;
+}
+
 ul.navigator {
   display: block;
+  margin-right: 20px;
   list-style-type: none;  
-  position: fixed;
-  top: 10px;
-  right: 20px;
-  font-size: 11pt;
+  float: right;
+  font-size: 10pt;
 }
 
 ul.navigator a {
@@ -86,21 +94,20 @@ ul.navigator li:first-of-type {
 
 ul.app-menu {
   margin: 12px 80px;
-  padding: 12px 32px;
+  padding: 12px 22px;
   list-style-type: none;
   border-top: 1px dashed #ddd;
 }
 
 ul.app-menu a {
-  font-family: "Open Sans", "Helvetica Neue", Helvetica,Arial, sans-serif;
-  color: #29f;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica,Arial, sans-serif;  
   text-decoration: underline;
 }
 
 ul.app-menu li {
   display: inline-block;
-  margin: 10px;
-  width: 500px;
+  margin: 10px 20px;
+  width: 460px;
   vertical-align: top;
 }
 
