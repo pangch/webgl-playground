@@ -1,8 +1,8 @@
-# WebGL Playground
+# WebGL Playground #
 
 Demo applications of WebGL.
 
-## Usage
+## Setup ##
 
 To run the demo, simply open the web page /public/index.html in a modern browser with WebGL support.
 

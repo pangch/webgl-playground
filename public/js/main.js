@@ -131,7 +131,7 @@ requirejs(['jquery', 'spin'], function($, Spinner) {
   // Document initialization
   $(document).ready(function() {    
     // Setup actions on app links
-    $('#app-menu a[data-app]').each(function() {
+    $('.app-menu a[data-app]').each(function() {
       var self = $(this);
       self.on('click', function() {
         launchApp(self.attr('data-app'));

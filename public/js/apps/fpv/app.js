@@ -1,4 +1,4 @@
-define(['./scene', './world', './camera'], function(scene, world, camera) {
+define(['./scene', './world', './camera', 'text!./dashboard.html'], function(scene, world, camera, dashboardHtml) {
 
 	var initGL = function(canvas) {
     var gl = canvas.get(0).getContext("experimental-webgl");      
@@ -27,6 +27,8 @@ define(['./scene', './world', './camera'], function(scene, world, camera) {
 
 		run: function(canvas, dashboard) {
       dashboard.addClass('light');
+      dashboard.removeClass('hidden');
+      dashboard.html(dashboardHtml);
       
       scene.init(initGL(canvas), initParams(canvas));
       scene.run();

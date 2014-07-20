@@ -8,27 +8,102 @@
 @font-face {
   font-family: 'Raleway';
   font-style: normal;
+  font-weight: 100;
+  src: local('Raleway Thin'), local('Raleway-Thin'), url(../fonts/Raleway-Thin.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
   font-weight: 400;
-  src: local('Raleway'), url(../fonts/Raleway.woff) format('woff');
+  src: local('Open Sans'), local('OpenSans'), url(../fonts/OpenSans.woff) format('woff');
 }
 
 body {
 	margin: 0;
   font-family: "Helvetica Neue", Helvetica,Arial, sans-serif;
-  -webkit-font-smoothing: antialiased !important;
   background: #EEE;
+  
+  -webkit-font-smoothing: antialiased !important;  
+}
+
+a {
+  text-decoration: none;  
+}
+
+a:hover {
+  text-decoration: underline;  
 }
 
 div.header {
   font-family: "Raleway", "Helvetica Neue", Helvetica,Arial, sans-serif;
-  background: #7BE;
-  color: #fff;
+  margin: 80px 80px 40px 80px;
+  padding: 0 40px;
+  width: 500px;
+  border-left: 1px solid #aaa;
 }
 
 div.header h1 {
-  padding: 180px 60px 40px 60px;
-  margin: 0;
+  font-weight: 100;
   font-size: 40pt;
+  
+  margin: 0;
+  color: #111;
+}
+
+div.header h2 {
+  font-weight: 100;
+  font-size: 20pt;
+  color: #999;
+}
+
+ul.navigator {
+  display: block;
+  list-style-type: none;  
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  font-size: 11pt;
+}
+
+ul.navigator a {
+  color: #999;
+}
+
+ul.navigator a:hover {
+  color: #333;
+}
+
+ul.navigator li {
+  display: inline-block;
+  padding: 0 8px;
+}
+
+ul.navigator li:first-of-type {
+  padding-right: 12px;
+  border-right: 1px dotted #999;
+}
+
+ul.app-menu {
+  display: block;
+  margin-left: 64px;
+  list-style-type: none;
+}
+
+ul.app-menu a {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica,Arial, sans-serif;
+  color: #29f;
+  text-decoration: underline;
+}
+
+ul.app-menu li {
+  display: block;
+  margin: 20px;
+  width: 500px;
+}
+
+ul.app-menu p {
+  color: #444;
 }
 
 div.canvas, div.dashboard {
@@ -67,6 +142,14 @@ div.canvas .info.error {
   overflow: auto;
 }
 
+div.canvas canvas {
+  border: none;
+}
+
+div.canvas canvas.error { 
+  display: none;
+}
+
 div.dashboard {
 	position: absolute;
 	width: 230px;
@@ -76,6 +159,26 @@ div.dashboard {
   font-family: 'Yanone Kaffeesatz', "Helvetica Neue", Helvetica,Arial, sans-serif;
 }
 
+div.dashboard h1 {
+  font-size: 12pt;
+}
+
+div.dashboard ul {
+  list-style-type: square;
+  margin-left: 20px;
+  padding: 0;
+}
+
+div.dashboard ul li {
+  line-height: 24px;
+}
+
+div.dashboard strong {
+  display: inline-block;
+  width: 80px;
+  margin-right: 10px;
+}
+
 div.dashboard.light {
   color: #fff;
   border: 1px solid #fff;
@@ -83,13 +186,6 @@ div.dashboard.light {
   opacity: .7;
 }
 
-div.canvas canvas {
-  border: none;
-}
-
-div.canvas canvas.error { 
-  display: none;
-}
 
 div.dashboard .input-label {
   display: inline-block;

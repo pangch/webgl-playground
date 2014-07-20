@@ -6,7 +6,8 @@
   <link rel="stylesheet" href="css/app.css">
   <script src="js/compatibility.js" type="text/javascript"></script>
   <script data-main="js/main" src="js/lib/require.js" type="text/javascript"></script>
-<!--
+<!-- Uncomment to enable WebGL Inspector -->
+<!-- 
   <script type="text/javascript">
       var gliEmbedDebug = true;
   </script>
@@ -16,12 +17,31 @@
 <body>
     <div class="header">
       <h1>WebGL Playground</h1>
+      <h2>A few demo applications built while learning WebGL.</h2>
     </div>
-    <ul id="app-menu">
-    	<li><a href="#" data-app='toy'>Toy</a></li>
-      <li><a href="#" data-app='fpv'>First Person View</a></li>
-      <li><a href="#" data-app='engrave'>Text Engraving</a></li>
-      <li><a href="#" data-app='rigid'>Rigid Body Simulation</a></li>
+    
+    <ul class="navigator">      
+      <li><a href="https://github.com/echevil/webgl-playground" title="View source code on Github">Source Code</a></li>
+      <li><a href="mailto:chen.pang@autodesk.com" title="Send an email to the author">Contact</a></li>
+    </ul>
+    
+    <ul class="app-menu">
+    	<li>
+        <h3><a href="#" data-app='fpv' title="Launch demo">First Person View</a></h3>
+        <p>A first person shooter like 3D scene generated from a 2D map.
+          Implemented an ad hoc lighting model to create a spot light effect. </p>
+      </li>
+      <li>
+        <h3><a href="#" data-app='engrave' title="Launch demo">Text Engraving</a></h3>
+        <p>Engrave text on a prism solid. A basic CSG library is implemented based on 
+          BSP tree, which supports union, substraction and intersection of primitives.</p>
+      </li>
+      <li>
+        <h3><a href="#" data-app='rigid' title="Launch demo">Physics Simulation on GPU</a></h3>
+        <p>Simulation of a group of small balls spawned in a confined space, bouncing 
+          and colliding with each other. This demo was created to explore physics simulation
+          and GPGPU techniques.</p>
+      </li>
     </ul>
 
     <div class="canvas">
