@@ -6,7 +6,7 @@ define(['./shader', './world', './camera', './math', 'gl-matrix'], function(shad
   var pMatrix = glm.mat4.create();   // Projection matrix
   var mvMatrix = glm.mat4.create();  // ModelView matrix
   
-  var useLighting = false;
+  var useLighting = true;
 
   var setMatrixUniforms = function() {
     gl.uniformMatrix4fv(shader.pMatrixUniform, false, pMatrix);
