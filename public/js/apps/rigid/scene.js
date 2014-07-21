@@ -80,7 +80,7 @@ define([
     gl.enableVertexAttribArray(shader.vertexNormalAttribute);    
     gl.enableVertexAttribArray(shader.objectIndexAttribute);
     
-    models.drawAxis(gl, shader);    
+    models.drawAxis(gl, shader);
     models.drawGrid(gl, shader);
     gl.uniform1i(shader.drawingObjectsUniform, true);
     

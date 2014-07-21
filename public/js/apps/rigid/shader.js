@@ -48,7 +48,7 @@ define(['./utils',
 	    gl.linkProgram(spaceGridProgram);
 
 	    if (!gl.getProgramParameter(spaceGridProgram, gl.LINK_STATUS)) {
-	      throw new Error("Failed to initialise shaders");
+	      throw new Error(gl.getProgramInfoLog(spaceGridProgram));
 	    }
 
       spaceGridProgram.vertexPositionAttribute = gl.getAttribLocation(spaceGridProgram, "aVertexPosition");
@@ -66,7 +66,7 @@ define(['./utils',
 	    gl.linkProgram(spaceGridVisualizationProgram);
 
 	    if (!gl.getProgramParameter(spaceGridVisualizationProgram, gl.LINK_STATUS)) {
-	      throw new Error("Failed to initialise shaders");
+	      throw new Error(gl.getProgramInfoLog(spaceGridVisualizationProgram));
 	    }
 
       spaceGridVisualizationProgram.vertexPositionAttribute = gl.getAttribLocation(spaceGridProgram, "aVertexPosition");
@@ -81,7 +81,7 @@ define(['./utils',
 	    gl.linkProgram(objectVelocityProgram);
 
 	    if (!gl.getProgramParameter(objectVelocityProgram, gl.LINK_STATUS)) {
-	      throw new Error("Failed to initialise shaders");
+	      throw new Error(gl.getProgramInfoLog(objectVelocityProgram));
 	    }
 
       objectVelocityProgram.vertexPositionAttribute = gl.getAttribLocation(objectVelocityProgram, "aVertexPosition");
@@ -101,7 +101,7 @@ define(['./utils',
 	    gl.linkProgram(objectPositionProgram);
 
 	    if (!gl.getProgramParameter(objectPositionProgram, gl.LINK_STATUS)) {
-	      throw new Error("Failed to initialise shaders");
+	      throw new Error(gl.getProgramInfoLog(objectPositionProgram));
 	    }
 
       objectPositionProgram.vertexPositionAttribute = gl.getAttribLocation(objectPositionProgram, "aVertexPosition");
@@ -120,7 +120,7 @@ define(['./utils',
 	    gl.linkProgram(program);
 
 	    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-	      throw new Error("Failed to initialise shaders");
+	      throw new Error(gl.getProgramInfoLog(program));
 	    }
       
 	    this.program = program;

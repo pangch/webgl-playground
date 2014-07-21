@@ -1,7 +1,5 @@
 precision mediump float;
 
-uniform int uSpaceGridSize;
-
 varying vec2 vIndex;
 
 void main(void) {  

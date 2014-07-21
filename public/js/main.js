@@ -48,7 +48,7 @@ requirejs(['jquery', 'spin'], function($, Spinner) {
       
       // Show a spinner after delay if the app is not loaded yet.
       if (!app.loaded && !app.aborted) {
-        spinner = new Spinner().spin();
+        spinner = new Spinner({ width: 2, color: '#333' }).spin();
         info.html(spinner.el);
       }
       
