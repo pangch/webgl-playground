@@ -1,4 +1,4 @@
-define(['./scene', './assets', './camera', 'text!./dashboard.html', 'browser'], function(scene, assets, camera, dashboardHtml, browser) {
+define(['./scene', './assets', './camera', 'text!./dashboard.html'], function(scene, assets, camera, dashboardHtml) {
 
 	var initGL = function(canvas) {
     var gl = canvas.get(0).getContext("experimental-webgl");      
@@ -21,13 +21,6 @@ define(['./scene', './assets', './camera', 'text!./dashboard.html', 'browser'], 
 
 	return {
     load: function(callback) {
-      debugger;
-      if (!browser.safari) {
-        alert(
-          'You may encounter problems running this demo in ' + browser.name +
-          '. Please run it in Safari 7 if possible.');
-      }
-      
       callback();
     },
 

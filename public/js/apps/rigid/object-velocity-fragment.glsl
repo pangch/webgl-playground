@@ -18,7 +18,7 @@ uniform sampler2D uObjectVelocityMap; // Old velocity
 #define FRICTION_MULTIPLIER -0.00025
 #define GRAVITY 0.00004
 
-#define WALL_DIST 72.0
+#define WALL_DIST 64.0
 
 // Convert from [-1, 1] to [0, 1]
 vec2 toTexCoord(vec2 vPosition) {

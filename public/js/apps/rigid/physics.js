@@ -15,8 +15,8 @@ define(['gl-matrix'], function(glm) {
   var objectVelocityMapFrameBuffer1;
 
   // An 3D grid to locate all objects
-  var spaceGridSize = 256;
-  var spaceGridTextureSize = 4096; // 256 ** 3 == 4096 ** 2
+  var spaceGridSize = 64;
+  var spaceGridTextureSize = 512; // 256 ** 3 == 4096 ** 2
   var spaceGridFrameBuffer;
   
   var useInitialObjectMaps = true;
@@ -29,11 +29,9 @@ define(['gl-matrix'], function(glm) {
     // First pos is the origin. Used for static objects in the scene.
     var pos = [];
     
-    var oneGrid = 120 / objectMapSize;
-    var halfGrid = oneGrid / 2;
     for (var i = 0; i < objectMapSize; i++) {
       for (var j = 0; j < objectMapSize; j++) {
-        pos.push(Math.random() * 72, Math.random() * 72 , Math.random() * 72);
+        pos.push(Math.random() * 64, Math.random() * 64 , Math.random() * 64);
       }      
     }
     

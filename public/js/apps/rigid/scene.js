@@ -106,7 +106,7 @@ define([
     init: function(_gl, _params) {
       gl = _gl; 
       params = _params;
-      
+
       var floatTextureExt = gl.getExtension('OES_texture_float');
       if (!floatTextureExt) {
         throw new Error("WebGL OES_texture_float extension not supported.");
